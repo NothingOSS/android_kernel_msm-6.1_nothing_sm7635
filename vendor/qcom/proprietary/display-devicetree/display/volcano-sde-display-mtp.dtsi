@@ -1,0 +1,86 @@
+#include "volcano-sde-display.dtsi"
+
+&sde_dp {
+	status = "disabled";
+};
+
+&soc {
+	display_panel_extdvdd: display_gpio_regulator@1 {
+		compatible = "qti-regulator-fixed";
+		regulator-name = "display_panel_extdvdd";
+		regulator-min-microvolt = <1300000>;
+		regulator-max-microvolt = <1300000>;
+		regulator-enable-ramp-delay = <233>;
+		gpio = <&tlmm 161 0>;
+		enable-active-high;
+		regulator-boot-on;
+		proxy-supply = <&display_panel_extdvdd>;
+		qcom,proxy-consumer-enable;
+		pinctrl-names = "default";
+		pinctrl-0 = <&display_panel_extdvdd_default>;
+	};
+};
+
+&dsi_ft8726_fhd_plus_120_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_lcd>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_ft8726_fhd_plus_90_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_lcd>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_ft8726_fhd_plus_60_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_lcd>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_wled";
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_sim_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&dsi_sim_vid {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&dsi_sim_dsc_375_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&dsi_sim_dsc_10b_cmd {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&sde_dsi {
+	lab-supply = <&lcdb_ldo_vreg>;
+	ibb-supply = <&lcdb_ncp_vreg>;
+	extdvdd-supply = <&display_panel_extdvdd>;
+
+	qcom,dsi-default-panel = <&dsi_ft8726_fhd_plus_120_video>;
+};
+
+&mdss_mdp {
+	connectors = <&sde_dsi &smmu_sde_unsec &sde_wb2 &sde_rscc>;
+};
+
+&qupv3_se0_i2c {
+	focaltech@38 {
+		panel = <&dsi_ft8726_fhd_plus_120_video
+			&dsi_ft8726_fhd_plus_90_video
+			&dsi_ft8726_fhd_plus_60_video>;
+	};
+};

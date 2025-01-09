@@ -1,0 +1,72 @@
+#include "volcano-sde-display-mtp.dtsi"
+
+&display_panel_extdvdd {
+	/delete-property/ gpio;
+	/delete-property/ pinctrl-0;
+	gpio = <&pmxr2230_gpios 10 0>;
+	pinctrl-0 = <&display_panel_extdvdd_pmic_default>;
+};
+
+&pmxr2230_gpios {
+	display_panel_extdvdd_pmic_default:
+	display_panel_extdvdd_pmic_default {
+		pins = "gpio10";
+		function = "gpio";
+		qcom,drive-strength = <2>;
+		bias-disable = <0>;
+		output-high;
+	};
+};
+
+&dsi_ft8726_fhd_plus_120_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_lcd_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
+	qcom,bl-pmic-pwm-period-usecs = <100>;
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+	qcom,platform-bklight-en-gpio = <&pmxr2230_gpios 12 0>;
+};
+
+&dsi_ft8726_fhd_plus_90_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_lcd_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
+	qcom,bl-pmic-pwm-period-usecs = <100>;
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+	qcom,platform-bklight-en-gpio = <&pmxr2230_gpios 12 0>;
+};
+
+&dsi_ft8726_fhd_plus_60_video {
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_lcd_no_labibb>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
+	qcom,bl-pmic-pwm-period-usecs = <100>;
+	qcom,mdss-dsi-bl-min-level = <1>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+	qcom,platform-bklight-en-gpio = <&pmxr2230_gpios 12 0>;
+};
+
+&sde_dsi {
+	/delete-property/ lab-supply;
+	/delete-property/ ibb-supply;
+
+	pwms = <&pmxr2230_pwm_4 0 0>;
+	pinctrl-names = "panel_active", "panel_suspend", "pwm_pin";
+	pinctrl-2 = <&lcd_backlight_pwm_default>;
+};
+
+&pmxr2230_gpios {
+	lcd_backlight_ctrl {
+		lcd_backlight_pwm_default: lcd_backlight_pwm_default {
+			pins = "gpio8";
+			function = "func1";
+			input-disable;
+			output-low;
+			bias-disable;
+			power-source = <0>;
+			qcom,drive-strength = <3>;
+		};
+	};
+};

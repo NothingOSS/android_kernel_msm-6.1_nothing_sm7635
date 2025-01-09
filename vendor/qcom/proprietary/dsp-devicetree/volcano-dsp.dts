@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+#include "volcano-dsp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. volcano v1 SoC";
+	compatible = "qcom,volcano";
+	qcom,board-id = <0 0>;
+	qcom,msm-id = <636 0x10000>, <640 0x10000>, <641 0x10000>, <657 0x10000>, <658 0x10000>,
+		<0x4000291 0x10000>, <0x4000292 0x10000>, <0x8000291 0x10000>, <0x8000292 0x10000>,
+		<0xc000291 0x10000>, <0xc000292 0x10000>, <0x10000291 0x10000>, <0x10000292 0x10000>;
+};

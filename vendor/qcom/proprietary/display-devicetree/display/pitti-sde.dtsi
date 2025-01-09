@@ -1,0 +1,152 @@
+#include <dt-bindings/clock/qcom,dispcc-pitti.h>
+#include <dt-bindings/clock/qcom,rpmcc.h>
+#include <dt-bindings/interconnect/qcom,pitti.h>
+#include <dt-bindings/clock/qcom,gcc-pitti.h>
+#include "pitti-sde-common.dtsi"
+
+&soc {
+	mdss_rotator: qcom,mdss_rotator {
+		compatible = "qcom,sde_rotator";
+		reg = <0x5e00000 0xac000>,
+		      <0x5eb0000 0x2008>;
+
+
+		reg-names = "mdp_phys",
+			"rot_vbif_phys";
+
+		#list-cells = <1>;
+		qcom,mdss-rot-mode = <1>;
+		qcom,mdss-highest-bank-bit = <0x7 0x1>;
+		clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
+			 <&dispcc DISP_CC_MDSS_ROT_CLK>;
+		clock-names = "iface_clk", "rot_clk";
+
+		interrupt-parent = <&mdss_mdp>;
+		interrupts = <2 0>;
+
+		power-domains = <&mdss_mdp>;
+
+		interconnects = <&mmrt_virt MASTER_MDP_PORT0 &bimc SLAVE_EBI_CH0>,
+				<&bimc MASTER_AMPSS_M0 &config_noc SLAVE_DISPLAY_CFG>;
+		interconnect-names = "qcom,rot-data-bus0",
+					"qcom,sde-reg-bus";
+		qcom,sde-reg-bus,vectors-KBps = <0 0>,<0 76800>;
+
+		/*Offline rotator RT setting */
+		qcom,mdss-rot-parent = <&mdss_mdp 0>;
+		qcom,mdss-rot-xin-id = <10 11>;
+
+		/* Offline rotator QoS setting */
+		qcom,mdss-rot-vbif-qos-setting = <3 3 3 3 3 3 3 3>;
+		qcom,mdss-rot-cdp-setting = <1 1>;
+		qcom,mdss-rot-qos-lut = <0x0 0x0 0x0 0x0>;
+		qcom,mdss-rot-danger-lut = <0x0 0x0>;
+		qcom,mdss-rot-safe-lut = <0x0000ffff 0x0000ffff>;
+		qcom,mdss-rot-vbif-memtype = <3 3>;
+		qcom,mdss-default-ot-rd-limit = <32>;
+		qcom,mdss-default-ot-wr-limit = <32>;
+
+		qcom,mdss-sbuf-headroom = <20>;
+
+		smmu_rot_unsec: qcom,smmu_rot_unsec_cb {
+			compatible = "qcom,smmu_sde_rot_unsec";
+			iommus = <&apps_smmu 0x043c 0x0>;
+			qcom,iommu-dma-addr-pool = <0x00020000 0xfffe0000>;
+			qcom,iommu-faults = "non-fatal";
+		};
+
+		smmu_rot_sec: qcom,smmu_rot_sec_cb {
+			compatible = "qcom,smmu_sde_rot_sec";
+			iommus = <&apps_smmu 0x43d 0x0>;
+			qcom,iommu-dma-addr-pool = <0x00020000 0xfffe0000>;
+			qcom,iommu-faults = "non-fatal";
+			qcom,iommu-vmid = <0xa>;
+		};
+	};
+
+	smmu_sde_unsec: qcom,smmu_sde_unsec_cb {
+		compatible = "qcom,smmu_sde_unsec";
+		iommus = <&apps_smmu 0x420 0x2>;
+		qcom,iommu-dma-addr-pool = <0x00060000 0x82CA0000 0x83A00000 0x7C600000>;
+		qcom,iommu-faults = "non-fatal";
+		qcom,iommu-earlymap; /* for cont-splash */
+		clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>;
+		clock-names = "mdp_core_clk";
+	};
+
+	smmu_sde_sec: qcom,smmu_sde_sec_cb {
+		compatible = "qcom,smmu_sde_sec";
+		iommus = <&apps_smmu 0x421 0x0>;
+		qcom,iommu-dma-addr-pool = <0x00020000 0xfffe0000>;
+		qcom,iommu-faults = "non-fatal";
+		qcom,iommu-vmid = <0xa>;
+		clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>;
+		clock-names = "mdp_core_clk";
+	};
+};
+
+&mdss_mdp {
+	clocks =
+		<&gcc GCC_DISP_HF_AXI_CLK>,
+		<&gcc GCC_DISP_THROTTLE_CORE_CLK>,
+		<&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
+		<&dispcc DISP_CC_MDSS_AHB_CLK>,
+		<&dispcc DISP_CC_MDSS_MDP_CLK>,
+		<&dispcc DISP_CC_MDSS_MDP_CLK_SRC>,
+		<&dispcc DISP_CC_MDSS_VSYNC_CLK>,
+		<&dispcc DISP_CC_MDSS_MDP_LUT_CLK>,
+		<&dispcc DISP_CC_MDSS_ROT_CLK>;
+	clock-names = "gcc_bus", "throttle_clk", "div_clk", "iface_clk",
+			"branch_clk", "core_clk", "vsync_clk",
+			"lut_clk", "rot_clk";
+	clock-rate = <0 0 0 0 506000000 506000000 19200000 506000000 200000000>;
+	clock-max-rate = <0 0 0 0 608000000 608000000 19200000 608000000 300000000>;
+
+	#power-domain-cells = <0>;
+	#list-cells = <1>;
+
+	vdd-supply = <&disp_cc_mdss_core_gdsc>;
+	/* data and reg bus scale settings */
+
+	interconnects = <&mmrt_virt MASTER_MDP_PORT0 &bimc SLAVE_EBI_CH0>,
+			<&bimc MASTER_AMPSS_M0 &config_noc SLAVE_DISPLAY_CFG>;
+	interconnect-names = "qcom,sde-data-bus0",
+				"qcom,sde-reg-bus";
+
+	qcom,sde-has-idle-pc;
+
+	qcom,sde-ib-bw-vote = <2500000 0 1600000>;
+
+	qcom,platform-supply-entries {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		qcom,platform-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "vdd";
+			qcom,supply-min-voltage = <0>;
+			qcom,supply-max-voltage = <0>;
+			qcom,supply-enable-load = <0>;
+			qcom,supply-disable-load = <0>;
+		};
+	};
+};
+
+&mdss_dsi0 {
+	vdda-1p2-supply = <&L7A>;
+	clocks = <&dispcc DISP_CC_MDSS_BYTE0_CLK>,
+		<&dispcc DISP_CC_MDSS_BYTE0_CLK_SRC>,
+		<&dispcc DISP_CC_MDSS_BYTE0_INTF_CLK>,
+		<&dispcc DISP_CC_MDSS_PCLK0_CLK>,
+		<&dispcc DISP_CC_MDSS_PCLK0_CLK_SRC>,
+		<&dispcc DISP_CC_MDSS_ESC0_CLK>,
+		<&rpmcc RPM_SMD_XO_CLK_SRC>;
+	clock-names = "byte_clk", "byte_clk_rcg", "byte_intf_clk",
+			"pixel_clk", "pixel_clk_rcg", "esc_clk", "xo";
+};
+
+&mdss_dsi_phy0 {
+	vdda-0p9-supply = <&L4A>;
+	qcom,dsi-pll-ssc-en;
+	qcom,dsi-pll-ssc-mode = "down-spread";
+	pll_codes_region = <&dsi_pll_codes_data>;
+};

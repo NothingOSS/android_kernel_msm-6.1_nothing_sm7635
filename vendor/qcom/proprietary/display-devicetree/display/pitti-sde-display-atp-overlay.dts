@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+#include "pitti-sde-display-atp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pitti ATP";
+	compatible = "qcom,pitti-atp", "qcom,pitti", "qcom,atp";
+	qcom,msm-id = <623 0x10000>;
+	qcom,board-id = <33 0>, <33 0x600>;
+	qcom,pmic-id-size = <9>;
+	qcom,pmic-id = <0x0 0x0 0x2E 0x0 0x0 0x0 0x0 0x0 0x0>;
+};

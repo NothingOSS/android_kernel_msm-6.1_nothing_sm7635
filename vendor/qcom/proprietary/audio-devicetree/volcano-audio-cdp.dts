@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "volcano-audio-cdp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. volcano IDP";
+	compatible = "qcom,volcano-idp", "qcom,volcano", "qcom,idp";
+	qcom,msm-id = <636 0x10000>, <640 0x10000>, <641 0x10000>;
+	qcom,board-id = <34 0>;
+};

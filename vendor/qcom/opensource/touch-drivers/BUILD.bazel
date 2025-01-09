@@ -1,0 +1,82 @@
+load("//build/kernel/kleaf:kernel.bzl", "ddk_headers")
+
+package(
+    default_visibility = [
+        "//visibility:public"],
+)
+
+ddk_headers(
+    name = "goodix_ts_headers",
+    hdrs = glob([
+            "goodix_berlin_driver/*.h",
+            "qts/*.h"
+        ]
+    )
+)
+
+ddk_headers(
+    name = "nt36xxx_headers",
+    hdrs = glob([
+            "nt36xxx/*.h"
+        ]
+    )
+)
+
+ddk_headers(
+    name = "focaltech_headers",
+    hdrs = glob([
+            "focaltech_touch/*.h"
+        ]
+    )
+)
+
+ddk_headers(
+    name = "synaptics_tcm_headers",
+    hdrs = glob([
+            "synaptics_tcm/*.h"
+        ]
+    )
+)
+
+ddk_headers(
+    name = "config_headers",
+    hdrs = glob([
+            "config/*.h"
+        ]
+    ),
+    includes = ["config"]
+)
+
+ddk_headers(
+    name = "glink_interface_ts_headers",
+    hdrs = glob([
+            "glink_interface_ts/*.h"
+        ]
+    ),
+    includes = ["glink_interface_ts"]
+)
+
+ddk_headers(
+    name = "pt_headers",
+    hdrs = glob([
+            "pt/*.h"
+        ]
+    )
+)
+
+ddk_headers(
+    name = "raydium_headers",
+    hdrs = glob([
+            "raydium/*.h",
+            "raydium/chip_raydium/*.h"
+        ]
+    )
+)
+
+ddk_headers(
+    name = "touch_drivers_headers",
+    hdrs = [":goodix_ts_headers", ":nt36xxx_headers", ":focaltech_headers", ":synaptics_tcm_headers", ":glink_interface_ts_headers", ":pt_headers", ":raydium_headers", ":config_headers"]
+)
+
+load(":target.bzl", "define_touch_target")
+define_touch_target()

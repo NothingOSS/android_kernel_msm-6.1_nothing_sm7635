@@ -1,0 +1,124 @@
+#include <bindings/qcom,audio-ext-clk.h>
+#include <bindings/qcom,gpr.h>
+#include "msm-audio-lpass.dtsi"
+
+&soc {
+	spf_core_platform: spf_core_platform {
+		compatible = "qcom,spf-core-platform";
+	};
+
+	lpass_audio_hw_vote: vote_lpass_audio_hw {
+		compatible = "qcom,audio-ref-clk";
+		qcom,codec-ext-clk-src = <AUDIO_LPASS_AUDIO_HW_VOTE>;
+		#clock-cells = <1>;
+	};
+};
+
+#include "blair-lpi.dtsi"
+
+&glink_edge {
+	audio_gpr: qcom,gpr {
+		compatible = "qcom,gpr";
+		qcom,glink-channels = "adsp_apps";
+		qcom,intents = <0x200 20>;
+		reg = <GPR_DOMAIN_ADSP>;
+
+		spf_core {
+			compatible = "qcom,spf_core";
+			reg = <GPR_SVC_ADSP_CORE>;
+		};
+
+		audio-pkt {
+			compatible = "qcom,audio-pkt";
+			qcom,audiopkt-ch-name = "apr_audio_svc";
+			reg = <GPR_SVC_MAX>;
+		};
+
+		audio_prm: q6prm {
+			compatible = "qcom,audio_prm";
+			reg = <GPR_SVC_ASM>;
+		};
+	};
+};
+
+&spf_core_platform {
+	msm_audio_ion: qcom,msm-audio-ion {
+		compatible = "qcom,msm-audio-ion";
+		qcom,smmu-version = <2>;
+		qcom,smmu-enabled;
+		iommus = <&apps_smmu 0x00A1 0x0>;
+		qcom,smmu-sid-mask = /bits/ 64 <0xf>;
+		qcom,iommu-dma-addr-pool = <0x10000000 0x10000000>;
+	};
+
+	msm_audio_ion_cma: qcom,msm-audio-ion-cma {
+		compatible = "qcom,msm-audio-ion-cma";
+	};
+
+	lpi_tlmm: lpi_pinctrl@a7c0000 {
+		compatible = "qcom,lpi-pinctrl";
+		reg = <0xa7c0000 0x0>;
+		qcom,slew-reg = <0x0a95a000 0x0>;
+		clock-names = "lpass_audio_hw_vote";
+		clocks = <&lpass_audio_hw_vote 0>;
+		qcom,gpios-count = <19>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		qcom,lpi-offset-tbl = <0x00000000>, <0x00001000>,
+					<0x00002000>, <0x00003000>,
+					<0x00004000>, <0x00005000>,
+					<0x00006000>, <0x00007000>,
+					<0x00008000>, <0x00009000>,
+					<0x0000A000>, <0x0000B000>,
+					<0x0000C000>, <0x0000D000>,
+					<0x0000E000>, <0x0000F000>,
+					<0x00010000>, <0x00011000>,
+					<0x00012000>;
+		qcom,lpi-slew-offset-tbl = <0x00000000>, <0x00000002>,
+						<0x00000004>, <0x00000008>,
+						<0x0000000A>, <0x0000000C>,
+						<0x00000000>, <0x00000000>,
+						<0x00000000>, <0x00000000>,
+						<0x00000010>, <0x00000012>,
+						<0x00000000>, <0x00000000>,
+						<0x00000000>, <0x00000000>,
+						<0x00000000>, <0x00000000>,
+						<0x00000014>;
+	};
+
+	bolero_cdc: bolero-codec {
+		compatible = "qcom,bolero-codec";
+		clock-names = "lpass_audio_hw_vote";
+		clocks = <&lpass_audio_hw_vote 0>;
+		bolero-clk-rsc-mngr {
+			compatible = "qcom,bolero-clk-rsc-mngr";
+		};
+
+		va_macro: va-macro@A730000 {
+			swr0: va_swr_master {
+			};
+		};
+
+		rx_macro: rx-macro@A600000 {
+			swr1: rx_swr_master {
+			};
+		};
+
+	};
+
+	holi_snd: sound {
+		compatible = "qcom,holi-asoc-snd";
+		qcom,mi2s-audio-intf = <1>;
+		qcom,auxpcm-audio-intf = <1>;
+		qcom,wcn-btfm = <0>;
+		qcom,ext-disp-audio-rx = <0>;
+		qcom,afe-rxtx-lb = <0>;
+		qcom,is-wcd937x-codec = <1>;
+		fsa4480-i2c-handle = <&fsa4480>;
+	};
+};
+
+&aliases {
+	swr0 = "/soc/spf_core_platform/bolero-codec/va-macro@A730000/va_swr_master";
+	swr1 = "/soc/spf_core_platform/bolero-codec/rx-macro@A600000/rx_swr_master";
+};

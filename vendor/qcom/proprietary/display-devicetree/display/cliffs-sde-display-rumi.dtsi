@@ -1,0 +1,6 @@
+#include "cliffs-sde-display.dtsi"
+#include "cliffs-sde-display-emulated.dtsi"
+
+&sde_dp {
+	qcom,dp-aux-switch = <&wcd_usbss>;
+};

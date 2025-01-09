@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "volcano-nfc-common-gpios.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Volcano6I MTP + WCD9395 HSJ + Brahma";
+	compatible = "qcom,volcano-mtp", "qcom,volcano", "qcom,volcanop-mtp", "qcom,volcanop", "qcom,mtp";
+	qcom,msm-id = <0x4000291 0x10000>, <0x8000291 0x10000>,  <0xc000291 0x10000>, <0x10000291 0x10000>, <0x4000292 0x10000>, <0x8000292 0x10000>, <0xc000292 0x10000>, <0x10000292 0x10000>;
+	qcom,board-id = <8 5>;
+};

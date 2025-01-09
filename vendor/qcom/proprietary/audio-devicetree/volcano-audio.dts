@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-volcano.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/interconnect/qcom,volcano.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "volcano-audio.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. volcano";
+	compatible = "qcom,volcano";
+	qcom,msm-id = <636 0x10000>, <640 0x10000>, <641 0x10000>, <657 0x10000>, <658 0x10000>;
+	qcom,board-id = <0 0>;
+};

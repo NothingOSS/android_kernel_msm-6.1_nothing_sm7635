@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "kalama-rb5-gen2-cnss.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Kalamap RB5 gen2";
+	compatible = "qcom,kalamap-iot", "qcom,kalamap", "qcom-iot";
+	qcom,msm-id = <603 0x20000>;
+	qcom,board-id = <0x1001f 0x2>, <0x1011f 0x2>, <0x1001f 0x6>;
+};

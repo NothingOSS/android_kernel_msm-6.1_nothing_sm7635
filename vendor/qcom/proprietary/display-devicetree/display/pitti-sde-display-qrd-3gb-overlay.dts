@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+#include "pitti-sde-display-qrd-3gb.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pitti QRD 3GB DDR";
+	compatible = "qcom,pitti-qrd", "qcom,pitti", "qcom,qrd";
+	qcom,msm-id = <623 0x10000>;
+	qcom,board-id = <11 0x501>;
+	qcom,pmic-id-size = <9>;
+	qcom,pmic-id = <0x0 0x0 0x2E 0x0 0x0 0x0 0x0 0x0 0x0>;
+};

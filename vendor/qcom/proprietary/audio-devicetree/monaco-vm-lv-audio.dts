@@ -1,0 +1,14 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "monaco-vm-audio.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Monaco Single LV Virtual Machine";
+	compatible = "qcom,monaco", "qcom,quinvm";
+	qcom,msm-id = <606 0x10000>;
+	qcom,board-id = <0x0 0x1000002>;
+};

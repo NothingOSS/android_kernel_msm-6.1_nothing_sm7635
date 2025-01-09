@@ -1,0 +1,19 @@
+#include "volcano-sde-display-mtp-wcd9395.dtsi"
+
+&display_panel_extdvdd {
+	/delete-property/ gpio;
+	/delete-property/ pinctrl-0;
+	gpio = <&pm8550vs_c_gpios 3 0>;
+	pinctrl-0 = <&display_panel_extdvdd_pmic_default>;
+};
+
+&pm8550vs_c_gpios {
+	display_panel_extdvdd_pmic_default:
+	display_panel_extdvdd_pmic_default {
+		pins = "gpio3";
+		function = "gpio";
+		qcom,drive-strength = <2>;
+		bias-disable = <0>;
+		output-high;
+	};
+};

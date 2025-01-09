@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/clock/qcom,gcc-qcs404.h>
+#include <dt-bindings/clock/qcom,rpmcc.h>
+#include <dt-bindings/interconnect/qcom,qcs405.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include "qcs405-gpu.dtsi"
+
+/{
+	model = "Qualcomm Technologies, Inc. QCS405";
+	compatible = "qcom,qcs405";
+	qcom,msm-id = <352 0x0>,<411 0x0>,<452 0x0>;
+	qcom,board-id = <0 0>;
+};

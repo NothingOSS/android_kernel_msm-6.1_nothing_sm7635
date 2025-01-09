@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "kalama-sde-display-hhg.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Kalama HHG";
+	compatible = "qcom,kalama-hhg", "qcom,kalama", "qcom,hhg";
+	qcom,msm-id = <536 0x10000>, <536 0x20000>, <600 0x20000>, <601 0x20000>;
+	qcom,board-id = <0x1001f 0x1>;
+};

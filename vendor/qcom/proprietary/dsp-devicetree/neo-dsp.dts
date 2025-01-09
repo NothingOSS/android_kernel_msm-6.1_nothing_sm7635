@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "neo-dsp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. neo v1 SoC";
+	compatible = "qcom,neo";
+	qcom,board-id = <0 0>;
+	qcom,msm-id = <554 0x10000>, <579 0x10000>;
+};

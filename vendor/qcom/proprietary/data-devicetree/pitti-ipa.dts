@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/soc/qcom,ipcc.h>
+#include <dt-bindings/interconnect/qcom,pitti.h>
+#include <dt-bindings/clock/qcom,gcc-pitti.h>
+#include <dt-bindings/clock/qcom,rpmcc.h>
+#include "pitti-ipa.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pitti";
+	compatible = "qcom,pitti";
+	qcom,msm-id = <623 0x10000>;
+	qcom,board-id = <0 0>, <0 0x501>, <0 0x600>;
+};

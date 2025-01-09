@@ -1,0 +1,10 @@
+#include "volcano-audio-cdp-wcd9395.dtsi"
+
+&pineapple_snd {
+	/delete-property/ qcom,pri-mi2s-gpios;
+	qcom,wcn-bt = <0>;
+};
+
+&fm_i2s0_gpios {
+	status = "disabled";
+};

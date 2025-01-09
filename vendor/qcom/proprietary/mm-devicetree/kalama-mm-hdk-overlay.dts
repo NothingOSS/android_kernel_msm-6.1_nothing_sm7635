@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "hw_fence/kalama-hw-fence.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Kalama HDK";
+	compatible = "qcom,kalama-hdk", "qcom,kalama", "qcom,hdk";
+	qcom,msm-id = <536 0x10000>, <536 0x20000>;
+	qcom,board-id = <0x1001f 0>;
+};

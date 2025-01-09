@@ -1,0 +1,6 @@
+#include "cliffs-audio-overlay.dtsi"
+#include "cliffs-adsp_loader.dtsi"
+
+&pineapple_snd {
+	qcom,model = "cliffs-qrd-cliffs7-snd-card";
+};

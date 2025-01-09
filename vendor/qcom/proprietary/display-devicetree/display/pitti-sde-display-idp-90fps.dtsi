@@ -1,0 +1,5 @@
+#include "pitti-sde-display-idp.dtsi"
+
+&sde_dsi {
+	qcom,dsi-default-panel = <&dsi_ft8726_fhd_plus_90_video>;
+};

@@ -1,0 +1,20 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,aop-qmp.h>
+#include <dt-bindings/clock/qcom,gcc-sm8150.h>
+#include <dt-bindings/clock/qcom,gpucc-sm8150.h>
+#include <dt-bindings/clock/qcom,rpmh.h>
+#include <dt-bindings/interconnect/qcom,sm8150.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+#include "sa8155-v2-gpu.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. SA8155 SoC";
+	qcom,msm-name = "SA8155 V2";
+	qcom,msm-id = <362 0x20000>, <367 0x20000>;
+	qcom,board-id = <0 0>;
+};

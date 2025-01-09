@@ -1,0 +1,36 @@
+#include "volcano-audio-overlay.dtsi"
+
+&pineapple_snd {
+	qcom,wcn-btfm = <0>;
+	qcom,ext-disp-audio-rx = <0>;
+	qcom,wcd-disabled =<1>;
+	qcom,audio-routing =
+		"TX DMIC0", "Digital Mic0",
+		"TX DMIC1", "Digital Mic1",
+		"TX DMIC2", "Digital Mic2",
+		"TX DMIC3", "Digital Mic3";
+	qcom,wsa-max-devs = <0>;
+};
+
+&swr0 {
+	qcom,swr-num-dev = <0>;
+	wsa883x_0221: wsa883x@02170221 {
+		status = "disabled";
+	};
+
+	wsa883x_0222: wsa883x@02170222 {
+		status = "disabled";
+	};
+};
+
+&wcd9378_codec {
+	status = "disabled";
+};
+
+&wcd9378_rx_slave {
+	status = "disabled";
+};
+
+&wcd9378_tx_slave {
+	status = "disabled";
+};

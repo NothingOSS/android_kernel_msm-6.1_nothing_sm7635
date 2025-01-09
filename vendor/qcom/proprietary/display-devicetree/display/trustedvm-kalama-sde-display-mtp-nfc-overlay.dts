@@ -1,0 +1,12 @@
+/dts-v1/;
+/plugin/;
+
+#include "trustedvm-kalama-sde.dtsi"
+#include "trustedvm-kalama-sde-display-mtp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Kalama MTP ST54K NFC - TrustedVM";
+	compatible = "qcom,kalama-mtp", "qcom,kalama", "qcom,mtp";
+	qcom,msm-id = <519 0x10000>, <536 0x10000>, <519 0x20000>, <536 0x20000>;
+	qcom,board-id = <0x1010008 0>;
+};

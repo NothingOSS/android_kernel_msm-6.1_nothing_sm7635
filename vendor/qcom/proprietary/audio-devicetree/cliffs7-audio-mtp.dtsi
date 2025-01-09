@@ -1,0 +1,6 @@
+#include "cliffs-audio-mtp.dtsi"
+#include "cliffs-adsp_loader.dtsi"
+
+&pineapple_snd {
+	qcom,model = "cliffs-mtp-wsa883x-cliffs7-snd-card";
+};

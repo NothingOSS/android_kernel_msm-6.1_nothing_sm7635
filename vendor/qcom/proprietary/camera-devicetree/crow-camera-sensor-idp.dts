@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-crow.h>
+#include <dt-bindings/clock/qcom,camcc-crow.h>
+#include <dt-bindings/interconnect/qcom,crow.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "crow-camera-sensor-idp.dtsi"
+/ {
+	model = "Qualcomm Technologies, Inc. Crow IDP";
+	compatible = "qcom,crow-idp", "qcom,crow", "qcom,idp";
+	qcom,msm-id = <608 0x10000>;
+	qcom,board-id = <34 0>, <34 1>, <34 2>, <34 3>, <34 4>;
+};

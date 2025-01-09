@@ -1,0 +1,10 @@
+/dts-v1/;
+/plugin/;
+
+#include "cliffs7-audio-qrd.dtsi"
+ / {
+	model = "Qualcomm Technologies, Inc. Cliffs QRD";
+	compatible = "qcom,cliffs-qrd", "qcom,cliffs", "qcom,qrd";
+	qcom,msm-id = <632 0x10000>, <643 0x10000>;
+	qcom,board-id = <11 0>;
+};

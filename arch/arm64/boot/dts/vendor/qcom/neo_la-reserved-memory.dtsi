@@ -1,0 +1,9 @@
+&reserved_memory {
+	#address-cells = <2>;
+	#size-cells = <2>;
+	ranges;
+
+	/delete-node/ ipa_fw_region@8a300000;
+	/delete-node/ ipa_gsi_region@8a310000;
+	/delete-node/ helios_ram_dump_region@80c00000;
+};

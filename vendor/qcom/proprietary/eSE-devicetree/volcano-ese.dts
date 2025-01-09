@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "volcano-ese-common.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Volcano SoC";
+	compatible = "qcom,volcano";
+	qcom,msm-id = <636 0x10000>, <640 0x10000>, <641 0x10000>;
+	qcom,board-id = <8 0>, <8 1>, <11 0>, <33 0>, <34 0>, <34 1>, <15 0>;
+};

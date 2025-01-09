@@ -1,0 +1,15 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sm6150.h>
+#include <dt-bindings/clock/qcom,scc-sm6150.h>
+#include <dt-bindings/interconnect/qcom,sm6150.h>
+#include "sa6155-audio.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. SA6155P";
+	compatible = "qcom,sa6155p";
+	qcom,msm-id = <377 0>, <380 0>;
+	qcom,board-id = <0 0>;
+};
+

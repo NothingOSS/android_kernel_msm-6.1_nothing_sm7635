@@ -1,0 +1,20 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-blair.h>
+#include <dt-bindings/clock/qcom,gpucc-blair.h>
+#include <dt-bindings/clock/qcom,rpmcc.h>
+#include <dt-bindings/interconnect/qcom,blair.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/regulator/qcom,rpm-smd-regulator.h>
+#include <dt-bindings/spmi/spmi.h>
+
+#include "blair-gpu.dtsi"
+#include "blair-gpu-pwrlevels.dtsi"
+/ {
+		model = "Qualcomm Technologies, Inc. Blair";
+		compatible = "qcom,blair";
+		qcom,msm-id = <507 0x10000>, <578 0x10000>;
+		qcom,board-id = <0 0>;
+};

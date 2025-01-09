@@ -1,0 +1,7 @@
+cc_library_headers {
+    name: "qti_glink_touch_kernel_headers",
+    export_include_dirs: [
+        "glink_interface_ts",
+    ],
+    vendor_available: true,
+}

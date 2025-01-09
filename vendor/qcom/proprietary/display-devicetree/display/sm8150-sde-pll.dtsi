@@ -1,0 +1,9 @@
+&soc {
+	mdss_dsi0_pll: qcom,mdss_dsi_pll@ae94900 {
+		status = "disabled";
+	};
+
+	mdss_dsi1_pll: qcom,mdss_dsi_pll@ae96900 {
+		status = "disabled";
+	};
+};

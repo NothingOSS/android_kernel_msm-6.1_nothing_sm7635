@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "pineapple-ese-common.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pineapple MTP";
+	compatible = "qcom,pineapple-mtp", "qcom,pineapple", "qcom,mtp";
+	qcom,msm-id = <557 0x10000>, <682 0x10000>;
+	qcom,board-id = <0x50008 0>;
+};

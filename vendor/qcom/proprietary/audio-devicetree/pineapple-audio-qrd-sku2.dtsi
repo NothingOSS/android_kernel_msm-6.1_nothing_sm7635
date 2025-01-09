@@ -1,0 +1,6 @@
+#include "pineapple-audio-qrd.dtsi"
+
+&pineapple_snd {
+	qcom,model = "pineapple-qrd-sku2-snd-card";
+};
+

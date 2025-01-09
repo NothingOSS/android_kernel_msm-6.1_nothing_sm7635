@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-pineapple.h>
+#include <dt-bindings/clock/qcom,camcc-pineapple.h>
+#include <dt-bindings/interconnect/qcom,pineapple.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "pineapple-camera-sensor-aim500.dtsi"
+/ {
+	model = "Qualcomm Technologies, Inc. Pineapple AIM500";
+	compatible = "qcom,pineapple-hdk", "qcom,pineapple", "qcom,hdk";
+	qcom,msm-id = <577 0x10000>, <577 0x20000>;
+	qcom,board-id = <0x1001f 1>, <0x1011f 1>;
+};

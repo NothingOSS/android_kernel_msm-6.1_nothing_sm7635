@@ -1,0 +1,123 @@
+#include "volcano-audio-overlay.dtsi"
+
+&tx_swr_clk_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data0_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data1_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data2_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&wcd939x_codec {
+	qcom,usbcss-hs-xtalk-config = <2>;
+	qcom,usbcss-hs-rdson = <600>;
+	qcom,usbcss-hs-r2 = <7550>;
+	qcom,usbcss-hs-r3 = <1>;
+	qcom,usbcss-hs-r4 = <330>;
+	qcom,usbcss-hs-r5 = <5>;
+	qcom,usbcss-hs-r6 = <1>;
+	qcom,usbcss-hs-r7 = <5>;
+	qcom,usbcss-hs-lin-k-aud = <13>;
+	qcom,usbcss-hs-lin-k-gnd = <13>;
+};
+
+&pineapple_snd {
+	qcom,model = "volcano-mtp-wsa883x_wcd939x-snd-card";
+	qcom,sku-model = "volcano-mtp-wsa883x_wcd939x_sku1-snd-card";
+	nvmem-cells = <&adsp_variant>;
+	nvmem-cell-names = "adsp_variant";
+	qcom,audio-routing =
+		"AMIC2", "Analog Mic2",
+		"AMIC2", "MIC BIAS2",
+		"VA AMIC2", "Analog Mic2",
+		"VA AMIC2", "VA MIC BIAS2",
+		"DMIC0", "Digital Mic0",
+		"DMIC0", "MIC BIAS3",
+		"DMIC1", "Digital Mic1",
+		"DMIC1", "MIC BIAS3",
+		"DMIC2", "Digital Mic2",
+		"DMIC2", "MIC BIAS1",
+		"DMIC3", "Digital Mic3",
+		"DMIC3", "MIC BIAS1",
+		"IN1_HPHL", "HPHL_OUT",
+		"IN2_HPHR", "HPHR_OUT",
+		"IN3_EAR", "AUX_OUT",
+		"WSA SRC0_INP", "SRC0",
+		"WSA_TX DEC0_INP", "TX DEC0 MUX",
+		"WSA_TX DEC1_INP", "TX DEC1 MUX",
+		"RX_TX DEC0_INP", "TX DEC0 MUX",
+		"RX_TX DEC1_INP", "TX DEC1 MUX",
+		"RX_TX DEC2_INP", "TX DEC2 MUX",
+		"RX_TX DEC3_INP", "TX DEC3 MUX",
+		"SpkrLeft IN", "WSA_SPK1 OUT",
+		"SpkrRight IN", "WSA_SPK2 OUT",
+		"TX SWR_INPUT", "WCD_TX_OUTPUT",
+		"VA SWR_INPUT", "VA_SWR_CLK",
+		"VA SWR_INPUT", "WCD_TX_OUTPUT",
+		"VA_AIF1 CAP", "VA_SWR_CLK",
+		"VA_AIF2 CAP", "VA_SWR_CLK",
+		"VA_AIF3 CAP", "VA_SWR_CLK",
+		"VA DMIC0", "Digital Mic0",
+		"VA DMIC1", "Digital Mic1",
+		"VA DMIC2", "Digital Mic2",
+		"VA DMIC3", "Digital Mic3",
+		"VA DMIC0", "VA MIC BIAS3",
+		"VA DMIC1", "VA MIC BIAS3",
+		"VA DMIC2", "VA MIC BIAS1",
+		"VA DMIC3", "VA MIC BIAS1";
+	asoc-codec = <&stub_codec>, <&lpass_cdc>,
+			<&wcd939x_codec>, <&wsa883x_0221>, <&wsa883x_0222>;
+	asoc-codec-names = "msm-stub-codec.1", "lpass-cdc",
+			"wcd939x_codec", "wsa-codec1", "wsa-codec2";
+	qcom,msm-mbhc-usbc-audio-supported = <1>;
+	qcom,msm-mbhc-hphl-swh = <0>;
+	qcom,msm-mbhc-gnd-swh = <0>;
+	qcom,wcd-disable-legacy-surge;
+	wcd939x-i2c-handle = <&wcd_usbss>;
+	qcom,ext-disp-audio-rx = <1>;
+	qcom,pri-mi2s-gpios = <&fm_i2s0_gpios>;
+};
+
+&wcd9378_codec {
+	status = "disabled";
+};
+
+&wcd9378_tx_slave {
+	status = "disabled";
+};
+
+&wcd9378_rx_slave {
+	status = "disabled";
+};
+
+&wcd939x_codec {
+	status = "okay";
+};
+
+&wcd939x_tx_slave {
+	status = "okay";
+};
+
+&wcd939x_rx_slave {
+	status = "okay";
+};
+
+&fm_i2s0_gpios {
+	status = "ok";
+};

@@ -1,0 +1,10 @@
+/dts-v1/;
+/plugin/;
+
+#include "cliffs-nfc-common.dtsi"
+/ {
+       model = "Qualcomm Technologies, Inc. Cliffs MTP";
+       compatible = "qcom,Cliffs-mtp", "qcom,Cliffs", "qcom,mtp";
+       qcom,msm-id = <614 0x10000>, <632 0x10000>, <642 0x10000>, <643 0x10000>;
+       qcom,board-id = <8 0>, <8 2>;
+};

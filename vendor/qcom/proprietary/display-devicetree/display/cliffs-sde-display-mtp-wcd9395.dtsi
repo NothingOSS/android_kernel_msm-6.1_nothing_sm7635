@@ -1,0 +1,10 @@
+#include "cliffs-sde-display-mtp.dtsi"
+
+&sde_dp {
+	status = "ok";
+	qcom,dp-aux-switch = <&wcd_usbss>;
+};
+
+&mdss_mdp {
+	connectors = <&sde_dsi &sde_dsi1 &smmu_sde_unsec &sde_wb1 &sde_wb2 &sde_rscc &sde_dp>;
+};

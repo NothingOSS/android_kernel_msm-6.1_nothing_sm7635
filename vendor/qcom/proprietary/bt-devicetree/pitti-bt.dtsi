@@ -1,0 +1,40 @@
+#include <dt-bindings/interconnect/qcom,pitti.h>
+
+&soc {
+        bluetooth: wcn3990 {
+                compatible = "qcom,wcn3990";
+                qcom,bt-sw-ctrl-gpio = <&tlmm 111 0>;
+                qcom,bt-vdd-io-supply = <&L9A>;   /* IO */
+                qcom,bt-vdd-core-supply = <&reg_1p3_rfa_fixed>; /* RFA */
+                qcom,bt-vdd-pa-supply = <&L23A>;   /* CH0 */
+                qcom,bt-vdd-xtal-supply = <&L12A>;/* XO */
+
+                qcom,bt-vdd-io-config = <1700000 2000000 1 0>;
+                qcom,bt-vdd-core-config = <0 0 1 0>;
+                qcom,bt-vdd-pa-config = <3200000 3544000 1 0>;
+                qcom,bt-vdd-xtal-config = <1700000 2000000 1 0>;
+        };
+
+	slim_msm: slim@a5c0000 {
+		status =  "ok";
+		ngd@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			//slimbus child nodes
+			slimbus: btfmslim-driver {
+				compatible = "slim217,221";
+				reg = <1 0>;
+				qcom,btslim-address  = <0x0>; /* BT SLIM EP address*/
+				qcom,btslimtx-channels = <159 160>; /* slimbus FM_Tx, SCO_Tx channels */
+				qcom,btslimrx-channels = <157 158>; /* slimbus SCO_A2DP_Rx A2DP_Rx */
+			};
+		};
+	};
+};
+
+//uart instance
+&qupv3_se2_4uart {
+        status = "ok";
+};
+

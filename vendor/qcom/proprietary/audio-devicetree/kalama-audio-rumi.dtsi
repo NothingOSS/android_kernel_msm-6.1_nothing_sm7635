@@ -1,0 +1,7 @@
+#include "kalama-audio-overlay.dtsi"
+
+&kalama_snd {
+	compatible = "qcom,kalama-asoc-snd-stub";
+	asoc-codec = <&stub_codec>;
+	asoc-codec-names = "msm-stub-codec.1";
+ };

@@ -1,0 +1,14 @@
+#include "volcano-audio-mtp.dtsi"
+
+&pineapple_snd {
+	qcom,msm-mbhc-usbc-audio-supported = <1>;
+	qcom,msm-mbhc-hphl-swh = <0>;
+	qcom,msm-mbhc-gnd-swh = <0>;
+	fsa4480-i2c-handle = <&fsa4480>;
+	/delete-property/ qcom,pri-mi2s-gpios;
+	qcom,wcn-bt = <0>;
+};
+
+&fm_i2s0_gpios {
+	status = "disabled";
+};

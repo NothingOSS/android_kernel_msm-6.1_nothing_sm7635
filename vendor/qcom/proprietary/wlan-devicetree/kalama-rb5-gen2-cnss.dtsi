@@ -1,0 +1,46 @@
+#include <dt-bindings/interconnect/qcom,kalama.h>
+
+&soc {
+	wlan: qcom,cnss-qca-converged {
+		chip_cfg@1 {
+			qcom,wlan-rc-num = <1>;
+			qcom,pcie-switch-type = <1>;
+			interconnects =
+			<&pcie_noc MASTER_PCIE_1 &pcie_noc SLAVE_ANOC_PCIE_GEM_NOC>,
+			<&gem_noc MASTER_ANOC_PCIE_GEM_NOC &mc_virt SLAVE_EBI1>;
+		};
+	};
+};
+
+&pcie1_rp {
+	#address-cells = <5>;
+	#size-cells = <0>;
+
+	pcie1_bus1_dev0_fn0: pcie1_bus1_dev0_fn0 {
+		reg = <0 0 0 0 0>;
+		pcie1_bus2_dev2_fn0: pcie1_bus2_dev2_fn0 {
+			reg = <0x1000 0x0 0x0 0x0 0x0>;
+			cnss_pci1_1: cnss_pci1_1 {
+				reg = <0x0 0x0 0x0 0x0 0x0>;
+				qcom,iommu-group = <&cnss_pci_iommu_group1_1>;
+				memory-region = <&cnss_wlan_mem>;
+
+				#address-cells = <1>;
+				#size-cells = <1>;
+				cnss_pci_iommu_group1_1: cnss_pci_iommu_group1_1 {
+					qcom,iommu-msi-size = <0x1000>;
+					qcom,iommu-dma-addr-pool = <0xa0000000 0x10000000>;
+					qcom,iommu-dma = "fastmap";
+					qcom,iommu-pagetable = "coherent";
+					qcom,iommu-faults = "stall-disable", "HUPCF", "no-CFRE",
+							    "non-fatal";
+				};
+			};
+		};
+	};
+};
+
+&cnss_pci0 {
+	reg = <0x4000 0x00 0x00 0x00 0x00>;
+	status="disabled";
+};

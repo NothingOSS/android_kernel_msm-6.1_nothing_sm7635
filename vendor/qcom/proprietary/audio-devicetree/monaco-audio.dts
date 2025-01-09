@@ -1,0 +1,10 @@
+/dts-v1/;
+/plugin/;
+
+#include "monaco-audio.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Monaco";
+	compatible = "qcom,monaco_auto";
+	qcom,msm-id = <606 0x10000>;
+};

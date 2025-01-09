@@ -1,0 +1,10 @@
+/dts-v1/;
+/plugin/;
+
+#include "kalama-sg-audio-hhg.dtsi"
+ / {
+	model = "Qualcomm Technologies, Inc. Kalama SG HHG";
+	compatible = "qcom,kalamap", "qcom,hhg";
+	qcom,msm-id = <600 0x20000>, <601 0x20000>;
+	qcom,board-id = <0x1001f 0x1>;
+};

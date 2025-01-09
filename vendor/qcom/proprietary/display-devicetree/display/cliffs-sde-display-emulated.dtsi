@@ -1,0 +1,49 @@
+&mdss_mdp {
+	qcom,sde-emulated-env;
+};
+
+&mdss_dsi_phy0 {
+	qcom,dsi-phy-pll-bypass;
+};
+
+&mdss_dsi_phy1 {
+	qcom,dsi-phy-pll-bypass;
+};
+
+&mdss_dsi0 {
+	qcom,dsi-phy-pll-bypass;
+};
+
+&mdss_dsi1 {
+	qcom,dsi-phy-pll-bypass;
+};
+
+&sde_dsi {
+	qcom,dsi-default-panel = <&dsi_sim_cmd>;
+	clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>;
+	clock-names = "mdp_core_clk";
+};
+
+&dsi_sim_vid {
+	qcom,dsi-select-clocks = "";
+	qcom,mdss-dsi-te-using-wd;
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_external";
+};
+
+&dsi_sim_cmd {
+	qcom,dsi-select-clocks = "";
+	/delete-property/ qcom,mdss-dsi-lane-3-state;
+	/delete-property/ qcom,poms-align-panel-vsync;
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_external";
+
+	qcom,mdss-dsi-display-timings {
+		timing@0 {
+			cell-index = <0>;
+			qcom,display-topology = <1 0 1>;
+			qcom,default-topology-index = <0>;
+			/delete-property/ qcom,compression-mode;
+		};
+	};
+};

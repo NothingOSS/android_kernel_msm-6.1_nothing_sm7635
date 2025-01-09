@@ -1,0 +1,27 @@
+#include "volcano6.dtsi"
+
+&S1K {
+			regulator-min-microvolt = <665000>;
+};
+
+/ {
+	model = "Qualcomm Technologies, Inc. Volcano6I SoC";
+	compatible = "qcom,volcano";
+	qcom,msm-id = <657 0x10000>;
+};
+
+&pcie0 {
+	status = "ok";
+};
+
+&gcc {
+	/delete-property/ protected-clocks;
+};
+
+&gcc_pcie_1_gdsc {
+	status = "ok";
+};
+
+&gcc_pcie_1_phy_gdsc {
+	status = "ok";
+};

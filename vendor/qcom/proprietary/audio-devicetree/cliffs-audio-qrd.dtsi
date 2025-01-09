@@ -1,0 +1,18 @@
+#include "cliffs-audio-overlay.dtsi"
+
+&pineapple_snd {
+	qcom,ext-disp-audio-rx = <1>;
+};
+
+&wcd939x_codec {
+	qcom,usbcss-hs-xtalk-config = <2>;
+	qcom,usbcss-hs-rdson = <600>;
+	qcom,usbcss-hs-r2 = <7550>;
+	qcom,usbcss-hs-r3 = <1>;
+	qcom,usbcss-hs-r4 = <330>;
+	qcom,usbcss-hs-r5 = <5>;
+	qcom,usbcss-hs-r6 = <1>;
+	qcom,usbcss-hs-r7 = <5>;
+	qcom,usbcss-hs-lin-k-aud = <13>;
+	qcom,usbcss-hs-lin-k-gnd = <13>;
+};

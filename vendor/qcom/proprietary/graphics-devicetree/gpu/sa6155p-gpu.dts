@@ -1,0 +1,23 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/qcom,rpmh.h>
+#include <dt-bindings/clock/qcom,aop-qmp.h>
+#include <dt-bindings/clock/qcom,gpucc-sm6150.h>
+#include <dt-bindings/clock/qcom,gcc-sm6150.h>
+#include <dt-bindings/interconnect/qcom,icc.h>
+#include <dt-bindings/interconnect/qcom,sm6150.h>
+#include <dt-bindings/soc/qcom,dcc_v2.h>
+#include <dt-bindings/soc/qcom,rpmh-rsc.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "sa6155p-gpu.dtsi"
+#include "sa6155p-gpu-pwrlevels.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. SA6155P SoC";
+	compatible = "qcom,sa6155p-adp-star", "qcom,sa6155p", "qcom,adp-star", "qcom,adp-air";
+	qcom,msm-id = <377 0>, <380 0>;
+	qcom,board-id = <0x010019 0>, <0x03010019 0>;
+};

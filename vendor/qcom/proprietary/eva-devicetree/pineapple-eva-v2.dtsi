@@ -1,0 +1,6 @@
+#include "pineapple-eva.dtsi"
+
+&msm_cvp {
+	qcom,allowed-clock-rates = <370000000 450000000 500000000 550000000>;
+};
+

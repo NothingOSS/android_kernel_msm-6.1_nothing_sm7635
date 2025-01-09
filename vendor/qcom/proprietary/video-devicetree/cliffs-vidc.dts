@@ -1,0 +1,15 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/qcom,gcc-cliffs.h>
+#include <dt-bindings/interconnect/qcom,cliffs.h>
+#include <dt-bindings/clock/qcom,videocc-pineapple.h>
+#include "cliffs-vidc.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. cliffs";
+	compatible = "qcom,cliffs";
+	qcom,msm-id = <614 0x10000>, <632 0x10000>, <642 0x10000>, <643 0x10000>;
+	qcom,board-id = <0 0>;
+};

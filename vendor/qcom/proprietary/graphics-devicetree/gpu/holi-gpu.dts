@@ -1,0 +1,21 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-holi.h>
+#include <dt-bindings/clock/qcom,gpucc-holi.h>
+#include <dt-bindings/clock/qcom,rpmcc.h>
+#include <dt-bindings/interconnect/qcom,holi.h>
+#include <dt-bindings/interconnect/qcom,icc.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/regulator/qcom,rpm-smd-regulator.h>
+#include <dt-bindings/spmi/spmi.h>
+
+#include "holi-gpu.dtsi"
+#include "holi-gpu-pwrlevels.dtsi"
+/ {
+		model = "Qualcomm Technologies, Inc. Holi SoC";
+		compatible = "qcom,holi";
+		qcom,msm-id = <454 0x10000>, <472 0x10000>;
+		qcom,board-id = <0 0>;
+};

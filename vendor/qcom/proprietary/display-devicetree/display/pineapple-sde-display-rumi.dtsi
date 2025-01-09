@@ -1,0 +1,2 @@
+#include "pineapple-sde-display.dtsi"
+#include "pineapple-sde-display-emulated.dtsi"

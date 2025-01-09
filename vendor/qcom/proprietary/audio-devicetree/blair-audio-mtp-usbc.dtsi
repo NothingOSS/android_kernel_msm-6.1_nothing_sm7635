@@ -1,0 +1,41 @@
+#include "blair-audio-overlay.dtsi"
+
+&swr0 {
+	qcom,is_wcd937x = <0>;
+};
+
+&wcd937x_tx_slave {
+	status = "disabled";
+};
+
+&wcd937x_rx_slave {
+	status = "disabled";
+};
+
+&wcd937x_codec {
+	status = "disabled";
+};
+
+&wcd938x_tx_slave {
+	status = "ok";
+};
+
+&wcd938x_rx_slave {
+	status = "ok";
+};
+
+&wcd938x_codec {
+	status = "ok";
+};
+
+&holi_snd {
+	qcom,model = "blair-mtp-usbc-snd-card";
+	qcom,msm-mbhc-usbc-audio-supported = <1>;
+	qcom,msm-mbhc-hphl-swh = <0>;
+	qcom,msm-mbhc-gnd-swh = <0>;
+	fsa4480-i2c-handle = <&fsa4480>;
+	asoc-codec  = <&stub_codec>, <&bolero_cdc>,
+		      <&wcd938x_codec>, <&wsa881x_i2c_e>;
+	asoc-codec-names = "msm-stub-codec.1", "bolero-codec",
+			   "wcd938x_codec", "wsa-codec0";
+};

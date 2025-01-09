@@ -1,0 +1,22 @@
+&soc {
+	stub_codec: qcom,msm-stub-codec {
+		compatible = "qcom,msm-stub-codec";
+	};
+
+	audio_pkt_core_platform: qcom,audio-pkt-core-platform {
+		compatible = "qcom,audio-pkt-core-platform";
+	};
+
+	adsp_loader: qcom,msm-adsp-loader {
+		status = "ok";
+		compatible = "qcom,adsp-loader";
+		qcom,rproc-handle = <&adsp_pas>;
+		qcom,adsp-state = <0>;
+	};
+
+	adsp_notify: qcom,msm-adsp-notify {
+		status = "ok";
+		compatible = "qcom,adsp-notify";
+		qcom,rproc-handle = <&adsp_pas>;
+	};
+};

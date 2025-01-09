@@ -1,0 +1,11 @@
+#include "pineapple-sde-display-cdp.dtsi"
+
+&sde_dsi {
+	qcom,dsi-default-panel = <&dsi_sharp_qhd_plus_dsc_cmd>;
+};
+
+&qupv3_se4_i2c {
+	atmel_mxt_ts@4a {
+		panel = <&dsi_sharp_qhd_plus_dsc_cmd>;
+	};
+};

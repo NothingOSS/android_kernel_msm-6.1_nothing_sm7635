@@ -1,0 +1,17 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/clock/qcom,gpucc-sm8250.h>
+#include <dt-bindings/clock/qcom,gcc-sm8250.h>
+#include <dt-bindings/clock/qcom,aop-qmp.h>
+#include <dt-bindings/interconnect/qcom,kona.h>
+#include "kona-v2-gpu.dtsi"
+
+/{
+	model = "Qualcomm Technologies, Inc. kona-iot v2";
+	compatible = "qcom,kona", "qcom,kona-iot";
+	qcom,msm-id = <356 0x20000>, <481 0x20000>;
+	qcom,board-id = <0 0>;
+};

@@ -1,0 +1,9 @@
+#include "kalama-audio-overlay.dtsi"
+
+&fm_i2s1_gpios {
+	status = "ok";
+};
+
+&kalama_snd {
+	qcom,sec-mi2s-gpios = <&fm_i2s1_gpios>;
+};

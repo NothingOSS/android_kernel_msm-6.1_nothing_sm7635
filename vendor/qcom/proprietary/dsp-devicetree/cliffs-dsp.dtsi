@@ -1,0 +1,220 @@
+&soc {
+
+	msm_fastrpc: qcom,msm_fastrpc {
+		compatible = "qcom,msm-fastrpc-compute";
+		qcom,adsp-remoteheap-vmid = <22 37>;
+		qcom,fastrpc-adsp-audio-pdr;
+		qcom,fastrpc-adsp-sensors-pdr;
+		qcom,rpc-latency-us = <235>;
+		qcom,fastrpc-gids = <2908>;
+
+		qcom,msm_fastrpc_compute_cb1 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C01 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			pd-type = <1>;	/* ROOT_PD */
+		};
+
+		qcom,msm_fastrpc_compute_cb2 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C02 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb3 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C03 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb4 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C04 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb5 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C05 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb6 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C06 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb7 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C07 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb8 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C08 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb9 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			qcom,secure-context-bank;
+			iommus = <&apps_smmu 0x0C09 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			qcom,iommu-vmid = <0xA>;	/* VMID_CP_PIXEL */
+			shared-cb = <3>;
+			dma-coherent;
+			qcom,iova-best-fit;
+			pd-type = <6>;	/* CPZ_USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb10 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "adsprpc-smd";
+			iommus = <&apps_smmu 0x1003 0x0080>,
+				 <&apps_smmu 0x1043 0x0020>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			pd-type = <1>;	/* ROOT_PD */
+		};
+
+		qcom,msm_fastrpc_compute_cb11 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "adsprpc-smd";
+			iommus = <&apps_smmu 0x1004 0x0080>,
+				 <&apps_smmu 0x1044 0x0020>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			shared-cb = <8>;
+			dma-coherent;
+			qcom,iova-best-fit;
+			pd-type = <3>;	/* SENSORS_STATICPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb12 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "adsprpc-smd";
+			iommus = <&apps_smmu 0x1005 0x0080>,
+				 <&apps_smmu 0x1045 0x0020>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			pd-type = <2>;	/* AUDIO_STATICPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb13 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "adsprpc-smd";
+			iommus = <&apps_smmu 0x1006 0x0080>,
+				 <&apps_smmu 0x1046 0x0020>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb14 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "adsprpc-smd";
+			iommus = <&apps_smmu 0x1007 0x0040>,
+				 <&apps_smmu 0x1067 0x0000>,
+				 <&apps_smmu 0x1087 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb15 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C0C 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb16 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C0D 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+
+		qcom,msm_fastrpc_compute_cb17 {
+			compatible = "qcom,msm-fastrpc-compute-cb";
+			label = "cdsprpc-smd";
+			iommus = <&apps_smmu 0x0C0E 0x0000>;
+			qcom,iommu-dma-addr-pool = <0x10000000 0xF0000000>;
+			qcom,iommu-faults = "stall-disable", "HUPCF";
+			dma-coherent;
+			qcom,iova-best-fit;
+			qcom,iova-max-align-shift = <9>; /* Set MAX alignment to 2 MB*/
+			pd-type = <7>;	/* USERPD */
+		};
+	};
+};

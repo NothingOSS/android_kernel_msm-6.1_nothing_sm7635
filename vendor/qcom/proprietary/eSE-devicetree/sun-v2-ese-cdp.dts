@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+#include "sun-v2-ese-common.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. Sun CDP";
+    compatible = "qcom,sun-cdp", "qcom,sun", "qcom,cdp";
+    //AS of now for V2 devices, we have mapped the msm-id and board id same as V1.
+    //We would update this once we receive the specs of V2 devices.
+    qcom,msm-id = <0x1000B 0>, <0x2000B 0>, <0x3000B 0>;
+    qcom,board-id = <0x1000B 0>, <0x2000B 0>, <0x3000B 0>;
+};

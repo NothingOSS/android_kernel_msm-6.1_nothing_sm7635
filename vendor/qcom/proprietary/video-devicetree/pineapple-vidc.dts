@@ -1,0 +1,15 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/qcom,gcc-pineapple.h>
+#include <dt-bindings/interconnect/qcom,pineapple.h>
+#include <dt-bindings/clock/qcom,videocc-pineapple.h>
+#include "pineapple-vidc.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pineapple";
+	compatible = "qcom,pineapple";
+	qcom,msm-id = <557 0x10000>, <577 0x10000>, <682 0x10000>;
+	qcom,board-id = <0 0>;
+};

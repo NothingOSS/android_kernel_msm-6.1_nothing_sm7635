@@ -1,0 +1,83 @@
+Qualcomm Technologies, Inc. HW FENCE
+
+HW Fence implements Linux APIs to initialize, deinitialize, register-for-signal, and
+overall manage the hw-fences, for hw-to-hw communcation between hw cores.
+
+Required properties
+- compatible: Must be "qcom,msm-hw-fence".
+- qcom,ipcc-reg: Registers ranges for ipcc registers.
+- qcom,hw-fence-table-entries: A u32 indicating number of entries for the hw-fence table
+- qcom,hw-fence-queue-entries: A u32 indicating default number of entries for the Queues
+- hw_fence@0: Doorbell configuration to communicate with secondary vm through hypervisor.
+- hw_fence@1: Carved-out emory-mapping region, to be used for mapping of global tables and queues
+	     used by the hw-fence driver and fence controller running in secondary vm.
+
+Optional properties:
+- qcom,dpu-ctl-start-n-reg: Register address range for dpu ctl-start registers.
+			  These are only used if the optional property to trigger the dpu-ctl-start
+			  feature is enabled. This for hardwares that don't support dpu ipcc.
+- qcom,hw-fence-ipc-ver: A u32 indicating ipc version. If not provided in device-tree, this is read
+                       from the registers.
+- qcom,hw-fence-client-type-[name]: A list of four u32 indicating <clients_num, queues_num,
+				  queue_entries, skip_txq_wr_idx>, where [name] specifies the client
+				  type these properties apply to. If provided, all four u32 values
+				  must be provided, and these override default values specified by
+				  the driver for some clients (e.g. dpu, gpu).
+				  -- clients_num: number of clients for given client type
+				  -- queues_num: 1 queue (TxQ) or 2 queues (RxQ and TxQ)
+				  -- queue_entries: number of entries per client queue
+				  -- skip_txq_wr_idx: bool indicating whether tx queue wr_idx update
+						    is skipped within hw fence driver and
+						    hfi_header->tx_wm is used instead
+- qcom,hw-fence-client-type-[name]-extra: A list of four u32 indicating extra client queue
+                                        properties: <start_padding, end_padding, txq_idx_start,
+					txq_idx_by_payload>. Later u32 values do not need to be
+					provided to provide values for earlier u32 values.
+				        -- start_padding: size of padding between queue table header
+					                and first queue header in bytes
+				        -- end_padding: size of padding between queue header(s) and
+						      first queue payload in bytes
+					-- txq_idx_start: start_index for TxQ rd_wr_index
+					-- txq_idx_by_payload: bool indicating whether TxQ rd_wr_idx
+							     indexes by payloads instead of default
+							     dwords
+
+Example:
+	msm_hw_fence: qcom,hw-fence {
+		compatible = "qcom,msm-hw-fence";
+		status = "ok";
+
+		qcom,ipcc-reg = <0x400000 0x100000>;
+		qcom,hw-fence-table-entries = <8192>;
+		qcom,hw-fence-queue-entries = <800>;
+
+		/* time register */
+		qcom,qtime-reg = <0xC221000 0x1000>;
+
+		/* ipc version */
+		qcom,hw-fence-ipc-ver = <0x20003>;
+
+		/* client queues: clients_num, queues_num, queue_entries, skip_txq_wr_idx */
+		qcom,hw-fence-client-type-dpu = <4 2 128 0>;
+		qcom,hw-fence-client-type-ife2 = <3 1 64 1>;
+
+		/* extra client queue properties */
+		qcom,hw-fence-client-type-ife2-extra = <20 28 1 1>;
+
+		/* haven doorbell specific */
+		hw_fence@0 {
+			compatible = "qcom,msm-hw-fence-db";
+			qcom,master;
+			gunyah-label = <6>;
+			peer-name = <3>;
+		};
+
+		/* haven io-mem specific */
+		hw_fence@1 {
+			compatible = "qcom,msm-hw-fence-mem";
+			qcom,master;
+			gunyah-label = <5>;
+			peer-name = <3>;
+			shared-buffer = <&hwfence_shbuf>;
+		};
+	};

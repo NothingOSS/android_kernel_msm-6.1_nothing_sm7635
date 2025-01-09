@@ -1,0 +1,42 @@
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/qcom,gcc-pineapple.h>
+
+&soc {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	ubwcp: ubwcp@17980000 {
+		compatible = "qcom,ubwcp", "simple-bus";
+		interrupt-parent = <&intc>;
+		reg = <0x17980000 0x10000>;
+		#ula_range-cells = <2>;
+		ula_range = <0x2 0x00000000 0x0 0x80000000>;
+		regulator-name = "vdd";
+		vdd-supply = <&apss_ubwcp_pwr_ctrl>;
+
+		clocks = <&gcc GCC_CPUSS_UBWCP_CLK_SRC>;
+		clock-names = "ubwcp_clk";
+
+		interrupts = <GIC_SPI 759 IRQ_TYPE_LEVEL_HIGH>, /* range ck read miss */
+					<GIC_SPI 760 IRQ_TYPE_LEVEL_HIGH>, /* range ck write miss */
+					<GIC_SPI 761 IRQ_TYPE_LEVEL_HIGH>, /* encode */
+					<GIC_SPI 762 IRQ_TYPE_LEVEL_HIGH>; /* decode */
+
+		/* context bank - descriptor  */
+		ubwcp_cb_desc {
+			compatible = "qcom,ubwcp-context-bank-desc";
+			label = "cb_desc";
+			iommus = <&ubwcp_smmu 0x0001 0x0000>;
+			qcom,iommu-faults = "non-fatal", "stall-disable";
+			dma-coherent;
+		};
+
+		/* context bank - buffer */
+		ubwcp_cb_buf {
+			compatible = "qcom,ubwcp-context-bank-buf";
+			label = "cb_buf";
+			iommus = <&ubwcp_smmu 0x0000 0x0000>;
+			qcom,iommu-faults = "non-fatal", "stall-disable";
+			dma-coherent;
+		};
+	};
+};

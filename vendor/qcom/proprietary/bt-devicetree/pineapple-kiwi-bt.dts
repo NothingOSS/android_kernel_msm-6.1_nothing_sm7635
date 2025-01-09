@@ -1,0 +1,12 @@
+/dts-v1/;
+/plugin/;
+
+#include "pineapple-kiwi-bt.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pineapple SoCs";
+	compatible = "qcom,pineapple", "qcom,pineapplep";
+	qcom,msm-id = <557 0x10000>, <577 0x10000>, <557 0x20000>, <577 0x20000>,
+			<682 0x10000>, <682 0x20000>;
+	qcom,board-id = <0 0>;
+};

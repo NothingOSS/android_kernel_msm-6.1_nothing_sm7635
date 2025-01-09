@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-crow.h>
+#include <dt-bindings/clock/qcom,camcc-crow.h>
+#include <dt-bindings/interconnect/qcom,crow.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "crow-camera-sensor-qrd.dtsi"
+/ {
+	model = "Qualcomm Technologies, Inc. Crow QRD";
+	compatible = "qcom,crow-qrd", "qcom,crow", "qcom,qrd";
+	qcom,msm-id = <608 0x10000>;
+	qcom,board-id = <11 0>;
+};

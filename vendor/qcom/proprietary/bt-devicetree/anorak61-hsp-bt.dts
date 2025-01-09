@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "anorak61-hsp-bt.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Anorak IDP HSP";
+	compatible = "qcom,anorak-idp", "qcom,anorak", "qcom,idp", "qcom,anorakp-idp", "qcom,anorakp";
+	qcom,msm-id = <549 0x10000>, <649 0x10000>;
+	qcom,board-id = <0x10022 0x0>, <0x10022 0x2>, <0x10022 0x4>, <0x10022 0x5>, <0x10022 0x7>;
+};

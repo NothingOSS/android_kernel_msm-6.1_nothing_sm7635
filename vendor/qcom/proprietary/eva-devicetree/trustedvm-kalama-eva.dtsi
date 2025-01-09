@@ -1,0 +1,6 @@
+&soc {
+	msm_cvp: qcom,cvp@ab00000 {
+		compatible = "qcom,msm-cvp", "qcom,kalama-cvp-tvm";
+		status = "ok";
+	};
+};

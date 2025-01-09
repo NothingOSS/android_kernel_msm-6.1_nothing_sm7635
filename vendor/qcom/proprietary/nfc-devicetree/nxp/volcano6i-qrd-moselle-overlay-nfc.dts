@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "volcano-nfc-common-gpios.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Volcano6I QRD +  WCD9378 AMIC + Amoled (SPI) + Moselle";
+	compatible = "qcom,volcano-qrd", "qcom,volcano", "qcom,volcanop-qrd", "qcom,volcanop", "qcom,qrd";
+	qcom,msm-id = <0x4000291 0x10000>, <0x8000291 0x10000>,  <0xc000291 0x10000>, <0x10000291 0x10000>, <0x4000292 0x10000>, <0x8000292 0x10000>, <0xc000292 0x10000>, <0x10000292 0x10000>;
+	qcom,board-id = <11 1>;
+};

@@ -1,0 +1,97 @@
+#include "volcano-audio-overlay.dtsi"
+
+&tx_swr_clk_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data0_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data1_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data2_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&pineapple_snd {
+	qcom,model = "volcano-qrd-wsa883x-snd-card";
+	qcom,sku-model = "volcano-qrd-wsa883x_sku1-snd-card";
+	nvmem-cells = <&adsp_variant>;
+	nvmem-cell-names = "adsp_variant";
+	qcom,wcn-bt = <1>;
+	qcom,audio-routing =
+		"AMIC1", "Analog Mic1",
+		"AMIC1", "MIC BIAS1",
+		"AMIC2", "Analog Mic2",
+		"AMIC2", "MIC BIAS2",
+		"AMIC3", "Analog Mic3",
+		"AMIC3", "MIC BIAS3",
+		"AMIC4", "Analog Mic4",
+		"AMIC4", "MIC BIAS1",
+		"VA AMIC1", "Analog Mic1",
+		"VA AMIC1", "VA MIC BIAS1",
+		"VA AMIC2", "Analog Mic2",
+		"VA AMIC2", "VA MIC BIAS2",
+		"VA AMIC3", "Analog Mic3",
+		"VA AMIC3", "VA MIC BIAS3",
+		"VA AMIC4", "Analog Mic4",
+		"VA AMIC4", "VA MIC BIAS1",
+		"IN1_HPHL", "HPHL_OUT",
+		"IN2_HPHR", "HPHR_OUT",
+		"IN3_AUX", "AUX_OUT",
+		"WSA SRC0_INP", "SRC0",
+		"WSA_TX DEC0_INP", "TX DEC0 MUX",
+		"WSA_TX DEC1_INP", "TX DEC1 MUX",
+		"RX_TX DEC0_INP", "TX DEC0 MUX",
+		"RX_TX DEC1_INP", "TX DEC1 MUX",
+		"RX_TX DEC2_INP", "TX DEC2 MUX",
+		"RX_TX DEC3_INP", "TX DEC3 MUX",
+		"SpkrRight IN", "WSA_SPK2 OUT",
+		"TX SWR_INPUT", "ADC1_OUTPUT",
+		"TX SWR_INPUT", "ADC2_OUTPUT",
+		"TX SWR_INPUT", "ADC3_OUTPUT",
+		"VA SWR_INPUT", "VA_SWR_CLK",
+		"VA SWR_INPUT", "ADC1_OUTPUT",
+		"VA SWR_INPUT", "ADC2_OUTPUT",
+		"VA SWR_INPUT", "ADC3_OUTPUT",
+		"VA_AIF1 CAP", "VA_SWR_CLK",
+		"VA_AIF2 CAP", "VA_SWR_CLK",
+		"VA_AIF3 CAP", "VA_SWR_CLK";
+	asoc-codec  = <&stub_codec>, <&lpass_cdc>,
+			      <&wcd9378_codec>, <&wsa883x_0222>;
+	asoc-codec-names = "msm-stub-codec.1", "lpass-cdc",
+			   "wcd9378_codec", "wsa-codec2";
+	qcom,wsa-max-devs = <1>;
+	qcom,msm-mbhc-usbc-audio-supported = <1>;
+	qcom,msm-mbhc-hphl-swh = <0>;
+	qcom,msm-mbhc-gnd-swh = <0>;
+	qcom,ext-disp-audio-rx = <1>;
+	qcom,pri-mi2s-gpios = <&fm_i2s0_gpios>;
+	fsa4480-i2c-handle = <&fsa4480>;
+};
+
+&swr0 {
+	qcom,swr-num-dev = <1>;
+	wsa883x_0221: wsa883x@02170221 {
+		status = "disabled";
+	};
+
+	wsa883x_0222: wsa883x@02170222 {
+		status = "okay";
+	};
+};
+
+&fm_i2s0_gpios {
+	status = "ok";
+};

@@ -1,0 +1,32 @@
+#include "pitti-sde-display.dtsi"
+
+&mdss_mdp {
+	qcom,sde-emulated-env;
+};
+
+&mdss_dsi_phy0 {
+	qcom,dsi-phy-pll-bypass;
+};
+
+&mdss_dsi0 {
+	qcom,dsi-phy-pll-bypass;
+};
+
+&sde_dsi {
+	qcom,dsi-default-panel = <&dsi_sim_cmd>;
+	clocks = <&dispcc DISP_CC_MDSS_MDP_CLK>;
+	clock-names = "mdp_core_clk";
+};
+
+&dsi_sim_vid {
+	qcom,dsi-select-clocks = "";
+	qcom,mdss-dsi-te-using-wd;
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_external";
+};
+
+&dsi_sim_cmd {
+	qcom,dsi-select-clocks = "";
+	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_sim>;
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_external";
+};

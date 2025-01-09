@@ -1,0 +1,153 @@
+#include "trustedvm-volcano-sde-display.dtsi"
+
+&dsi_vtdr6130_amoled_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+
+	qcom,mdss-dsi-display-timings {
+		timing@0 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+
+		timing@1 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+
+		timing@2 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+
+		timing@3 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+	};
+};
+
+&dsi_vtdr6130_amoled_video {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_vtdr6130_amoled_120hz_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+
+	qcom,mdss-dsi-display-timings {
+		timing@0 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+
+		timing@1 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+
+		timing@2 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+	};
+};
+
+&dsi_vtdr6130_amoled_120hz_video {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_vtdr6130_amoled_90hz_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+
+	qcom,mdss-dsi-display-timings {
+		timing@0 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+
+		timing@1 {
+			/delete-property/ qcom,mdss-dsi-panel-clockrate;
+		};
+	};
+};
+
+&dsi_vtdr6130_amoled_90hz_video {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_vtdr6130_amoled_60hz_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_vtdr6130_amoled_60hz_video {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_vtdr6130_amoled_qsync_144hz_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_vtdr6130_amoled_qsync_144hz_video {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+	qcom,mdss-dsi-bl-min-level = <10>;
+	qcom,mdss-dsi-bl-max-level = <4095>;
+	qcom,mdss-brightness-max-level = <8191>;
+	qcom,mdss-dsi-bl-inverted-dbv;
+	qcom,platform-reset-gpio = <&tlmm 12 0>;
+};
+
+&dsi_sim_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&dsi_sim_vid {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&dsi_sim_dsc_375_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&dsi_sim_dsc_10b_cmd {
+	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+};
+
+&sde_dsi {
+	qcom,dsi-default-panel = <&dsi_vtdr6130_amoled_cmd>;
+};

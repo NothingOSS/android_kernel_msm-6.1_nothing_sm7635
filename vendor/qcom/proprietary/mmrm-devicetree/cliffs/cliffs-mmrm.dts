@@ -1,0 +1,14 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,camcc-cliffs.h>
+#include <dt-bindings/clock/qcom,videocc-pineapple.h>
+#include <dt-bindings/clock/qcom,dispcc-pineapple.h>
+#include "cliffs-mmrm.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. cliffs SoC";
+	compatible = "qcom,cliffs";
+	qcom,msm-id = <614 0x10000>, <632 0x10000>;
+	qcom,board-id = <0 0>; /* required by merge_dtbs.py */
+};

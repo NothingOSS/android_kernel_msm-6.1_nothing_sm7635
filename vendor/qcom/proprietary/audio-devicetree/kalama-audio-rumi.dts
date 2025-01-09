@@ -1,0 +1,10 @@
+/dts-v1/;
+/plugin/;
+
+#include "kalama-audio-rumi.dtsi"
+ / {
+	model = "Qualcomm Technologies, Inc. Kalama RUMI";
+	compatible = "qcom,kalama-rumi", "qcom,kalama", "qcom,rumi";
+	qcom,msm-id = <519 0x10000>, <519 0x20000>, <536 0x10000>, <536 0x20000>;
+	qcom,board-id = <0x1000F 0>;
+};

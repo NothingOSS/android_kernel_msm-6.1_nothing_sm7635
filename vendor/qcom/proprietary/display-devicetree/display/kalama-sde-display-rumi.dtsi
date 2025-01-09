@@ -1,0 +1,2 @@
+#include "kalama-sde-display.dtsi"
+#include "kalama-sde-display-emulated.dtsi"

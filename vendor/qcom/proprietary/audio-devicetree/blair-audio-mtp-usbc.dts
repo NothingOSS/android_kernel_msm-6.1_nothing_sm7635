@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "blair-audio-mtp-usbc.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Blair MTP USBC audio";
+	compatible = "qcom,blair-mtp", "qcom,blair", "qcom,mtp";
+	qcom,msm-id = <507 0x10000>, <578 0x10000>, <454 0x10000>, <472 0x10000>;
+	qcom,board-id = <8 1>;
+};

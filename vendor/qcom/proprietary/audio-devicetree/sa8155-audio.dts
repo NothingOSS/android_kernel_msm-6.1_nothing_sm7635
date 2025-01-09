@@ -1,0 +1,19 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sm8150.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/interconnect/qcom,sm8150.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "sa8155-audio.dtsi"
+
+/ {
+
+	model = "Qualcomm Technologies, Inc. SA8155";
+	compatible = "qcom,sa8155";
+	qcom,msm-id = <339 0x10000>, <339 0x20000>, <362 0x10000>,
+			<362 0x20000>, <367 0x10000>, <367 0x20000>,
+			<405 0x20000>;
+	qcom,board-id = <0 0>;
+};

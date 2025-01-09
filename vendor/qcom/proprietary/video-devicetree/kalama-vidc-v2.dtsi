@@ -1,0 +1,8 @@
+
+#include "kalama-vidc.dtsi"
+
+/* KalamaV2-specific changes */
+&msm_vidc {
+	compatible = "qcom,sm8550-vidc-v2";
+};
+

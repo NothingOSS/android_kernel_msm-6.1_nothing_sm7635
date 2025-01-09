@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "volcano-nfc-common-gpios.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Volcano SoC";
+	compatible = "qcom,volcano";
+	qcom,msm-id = <636 0x10000>, <640 0x10000>, <641 0x10000>, <657 0x10000>, <658 0x10000>;
+	qcom,board-id = <33 0>, <34 0>, <34 1>, <34 4>, <34 5>, <8 0>, <8 1>, <8 9>, <8 10>, <11 0>, <15 0>;
+};

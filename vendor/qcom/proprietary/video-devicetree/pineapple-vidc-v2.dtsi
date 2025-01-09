@@ -1,0 +1,8 @@
+
+#include "pineapple-vidc.dtsi"
+
+/* Pineapple V2-specific changes */
+&msm_vidc {
+	compatible = "qcom,sm8650-vidc-v2";
+};
+

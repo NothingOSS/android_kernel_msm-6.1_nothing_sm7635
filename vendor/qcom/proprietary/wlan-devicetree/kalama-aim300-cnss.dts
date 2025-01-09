@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "kalama-aim300-cnss.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Kalama AIM300";
+	compatible = "qcom,kalama", "qcom,kalamap";
+	qcom,msm-id = <603 0x20000>;
+	qcom,board-id = <0x1001f 0x3>, <0x1011f 0x3>, <0x2001f 0x3>;
+};

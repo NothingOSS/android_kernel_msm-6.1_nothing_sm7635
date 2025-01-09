@@ -1,0 +1,2 @@
+#include "cliffs-audio-atp.dtsi"
+#include "cliffs-adsp_loader.dtsi"

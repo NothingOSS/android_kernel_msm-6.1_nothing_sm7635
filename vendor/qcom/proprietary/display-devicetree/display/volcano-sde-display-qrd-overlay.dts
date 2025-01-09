@@ -1,0 +1,15 @@
+/dts-v1/;
+/plugin/;
+
+#include "volcano-sde-display-qrd.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Volcano QRD";
+	compatible = "qcom,volcano-qrd", "qcom,volcano", "qcom,volcanop-qrd", "qcom,volcanop", "qcom,qrd";
+	qcom,msm-id = <636 0x10000>, <640 0x10000>, <641 0x10000>,
+			<0x4000291 0x10000>, <0x4000292 0x10000>,
+			<0x8000291 0x10000>, <0x8000292 0x10000>,
+			<0xC000291 0x10000>, <0xC000292 0x10000>,
+			<0x10000291 0x10000>, <0x10000292 0x10000>;
+	qcom,board-id = <11 0>, <11 1>;
+};

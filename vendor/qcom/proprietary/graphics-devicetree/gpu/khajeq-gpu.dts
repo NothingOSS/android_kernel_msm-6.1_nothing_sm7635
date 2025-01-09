@@ -1,0 +1,23 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/clock/qcom,rpmcc.h>
+#include <dt-bindings/clock/qcom,dispcc-khaje.h>
+#include <dt-bindings/clock/qcom,gcc-khaje.h>
+#include <dt-bindings/clock/qcom,gpucc-khaje.h>
+#include <dt-bindings/spmi/spmi.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/interconnect/qcom,bengal.h>
+#include <dt-bindings/soc/qcom,dcc_v2.h>
+
+#include "khaje-gpu.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Khajeq SoC";
+	compatible = "qcom,khajeq", "qcom,khajeq-qrd",
+			"qcom,khajeq-atp", "qcom,khajeq-idp";
+	qcom,msm-id = <562 0x10000>;
+	qcom,board-id = <0 0>;
+};
+

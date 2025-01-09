@@ -1,0 +1,5 @@
+&adsp_loader {
+	adsp-fuse-not-supported = <1>;
+	adsp-fw-name = "adsp2.mdt";
+	adsp-dtb-name = "adsp2_dtb.mdt";
+};

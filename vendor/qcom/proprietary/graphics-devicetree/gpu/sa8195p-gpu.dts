@@ -1,0 +1,17 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sc8180x.h>
+#include <dt-bindings/clock/qcom,gpucc-sm8150.h>
+#include <dt-bindings/interconnect/qcom,sc8180x.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "sa8195p-gpu.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. SA8195P SoC";
+	qcom,msm-name = "SA8195P";
+	qcom,msm-id = <405 0x20000>;
+	qcom,board-id = <0 0>;
+};

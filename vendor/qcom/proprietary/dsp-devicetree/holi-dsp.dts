@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "holi-dsp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. holi v1 SoC";
+	compatible = "qcom,holi";
+	qcom,msm-id = <454 0x10000>;
+	qcom,board-id = <0 0>;
+};

@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-sm6125.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "trinket-bt-v1.dtsi"
+
+/ {
+
+    model = "Qualcomm Technologies, Inc. TRINKET IOT IDP Overlay";
+    compatible = "qcom,trinket-iot";
+    qcom,msm-id = <467 0x10000>, <467 0x0>, <468 0x10000>, <468 0x0>;
+    qcom,board-id = <34 0>;
+};

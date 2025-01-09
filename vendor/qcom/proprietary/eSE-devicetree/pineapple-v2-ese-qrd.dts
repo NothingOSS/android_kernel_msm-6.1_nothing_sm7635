@@ -1,0 +1,11 @@
+/dts-v1/;
+/plugin/;
+
+#include "pineapple-v2-ese-common.dtsi"
+
+/ {
+    model = "Qualcomm Technologies, Inc. Pineapple QRD";
+    compatible = "qcom,pineapple-qrd", "qcom,pineapple", "qcom,qrd";
+    qcom,msm-id = <557 0x20000>, <577 0x20000>, <682 0x20000>;
+    qcom,board-id = <11 0>;
+};

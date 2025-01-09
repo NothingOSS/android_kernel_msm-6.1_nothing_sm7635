@@ -1,0 +1,16 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,gcc-cliffs.h>
+#include <dt-bindings/clock/qcom,camcc-cliffs.h>
+#include <dt-bindings/interconnect/qcom,cliffs.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+
+#include "cliffs-camera-sensor-mtp.dtsi"
+/ {
+	model = "Qualcomm Technologies, Inc. Cliffs QRD";
+	compatible = "qcom,cliffs-qrd", "qcom,cliffs", "qcom,qrd";
+	qcom,msm-id = <614 0x10000>, <632 0x10000>, <642 0x10000>, <643 0x10000>;
+	qcom,board-id = <11 0>;
+};

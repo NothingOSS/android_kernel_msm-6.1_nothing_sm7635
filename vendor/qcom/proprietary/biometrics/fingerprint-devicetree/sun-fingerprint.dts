@@ -1,0 +1,10 @@
+/dts-v1/;
+/plugin/;
+
+#include "sun-fingerprint.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Sun SoC";
+	compatible = "qcom,sun";
+	qcom,board-id = <0 0>;
+};

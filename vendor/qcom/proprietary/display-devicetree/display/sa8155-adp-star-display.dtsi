@@ -1,0 +1,318 @@
+#include <dt-bindings/clock/qcom,rpmh.h>
+#include "sm8150-sde.dtsi"
+#include "sm8150-sde-pll.dtsi"
+
+&tlmm {
+	ioexp_intr_active: ioexp_intr_active {
+		mux {
+			pins = "gpio48";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio48";
+			drive-strength = <2>;
+			bias-pull-up;
+		};
+	};
+
+	ioexp_reset_active: ioexp_reset_active {
+		mux {
+			pins = "gpio30";
+			function = "gpio";
+		};
+		config {
+			pins = "gpio30";
+			drive-strength = <2>;
+			bias-disable;
+			output-high;
+		};
+	};
+};
+
+&sde_dp {
+	vdda-1p2-supply = <&pm8150_2_l8>;
+	vdda-0p9-supply = <&pm8150_2_l18>;
+	vdd_mx-supply = <&VDD_MX_LEVEL>;
+
+	qcom,ext-disp = <&ext_disp>;
+	qcom,dp-aux-switch = <&sde_dp>;
+	qcom,dp-hpd-gpio = <&ioexp 8 0>;
+	qcom,mst-fixed-topology-ports = <1 2>;
+	qcom,widebus-enable;
+
+	pinctrl-names = "mdss_dp_active", "mdss_dp_sleep";
+	pinctrl-0 = <&dp_hpd_cfg_pins>;
+	pinctrl-1 = <&dp_hpd_cfg_pins>;
+
+	qcom,core-supply-entries {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		qcom,core-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "refgen";
+			qcom,supply-min-voltage = <0>;
+			qcom,supply-max-voltage = <0>;
+			qcom,supply-enable-load = <0>;
+			qcom,supply-disable-load = <0>;
+		};
+	};
+};
+
+&mdss_dsi_phy0 {
+	vdda-0p9-supply = <&pm8150_2_l18>;
+};
+
+&mdss_dsi_phy1 {
+	vdda-0p9-supply = <&pm8150_2_l18>;
+};
+
+&mdss_dsi0 {
+	vdda-1p2-supply = <&pm8150_2_l8>;
+};
+
+&mdss_dsi1 {
+	vdda-1p2-supply = <&pm8150_2_l8>;
+};
+
+&qupv3_se19_i2c {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	status = "ok";
+
+	pinctrl-0 = <&qupv3_se19_i2c_active
+		&ioexp_intr_active
+		&ioexp_reset_active>;
+
+	ioexp: gpio@3e {
+		#gpio-cells = <2>;
+		#interrupt-cells = <2>;
+		compatible = "semtech,sx1509q";
+		reg = <0x3e>;
+		interrupt-parent = <&tlmm>;
+		interrupts = <48 0>;
+		gpio-controller;
+		interrupt-controller;
+		semtech,probe-reset;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&dsi1_hpd_cfg_pins
+			&dsi1_cdet_cfg_pins
+			&dsi2_hpd_cfg_pins
+			&dsi2_cdet_cfg_pins
+			&dp_hpd_cfg_pins>;
+
+		dsi1_hpd_cfg_pins: gpio0-cfg {
+			pins = "gpio0";
+			bias-pull-up;
+		};
+
+		dsi1_cdet_cfg_pins: gpio1-cfg {
+			pins = "gpio1";
+			bias-pull-down;
+		};
+
+		dsi2_hpd_cfg_pins: gpio2-cfg {
+			pins = "gpio2";
+			bias-pull-up;
+		};
+
+		dsi2_cdet_cfg_pins: gpio3-cfg {
+			pins = "gpio3";
+			bias-pull-down;
+		};
+
+		dp_hpd_cfg_pins: gpio8-cfg {
+			pins = "gpio8";
+			bias-pull-down;
+		};
+	};
+
+	i2c-mux@77 {
+		compatible = "nxp,pca9542";
+		reg = <0x77>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		i2c@0 {
+			reg = <0>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			anx_7625_1: anx7625@2c {
+				compatible = "analogix,anx7625";
+				reg = <0x58>;
+				interrupt-parent = <&ioexp>;
+				interrupts = <0 0>;
+				enable-gpios = <&tlmm 47 0>;
+				reset-gpios = <&tlmm 49 0>;
+			};
+		};
+
+		i2c@1 {
+			reg = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			anx_7625_2: anx7625@2c {
+				compatible = "analogix,anx7625";
+				reg = <0x58>;
+				interrupt-parent = <&ioexp>;
+				interrupts = <2 0>;
+				enable-gpios = <&tlmm 87 0>;
+				reset-gpios = <&tlmm 29 0>;
+			};
+		};
+	};
+};
+
+&anx_7625_1 {
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			anx_7625_1_in: endpoint {
+				remote-endpoint = <&dsi_anx_7625_1_out>;
+			};
+		};
+	};
+};
+
+&anx_7625_2 {
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			anx_7625_2_in: endpoint {
+				remote-endpoint = <&dsi_anx_7625_2_out>;
+			};
+		};
+	};
+};
+
+#include "dsi-panel-ext-bridge-1080p-gen3.dtsi"
+
+&dsi_ext_bridge_1080p {
+	qcom,mdss-dsi-display-timings {
+		timing@0{
+			qcom,mdss-dsi-panel-phy-timings = [00 1E 08 07 24 22
+				08 08 05 02 04 00 19 17];
+		};
+	};
+};
+
+&soc {
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	dsi_dp1: qcom,dsi-display@1 {
+		compatible = "qcom,dsi-display";
+		label = "primary";
+
+		qcom,dsi-ctrl = <&mdss_dsi0 &mdss_dsi1>;
+		qcom,dsi-phy = <&mdss_dsi_phy0 &mdss_dsi_phy1>;
+
+		clocks = <&mdss_dsi_phy0 0>,
+			<&mdss_dsi_phy0 1>,
+			<&mdss_dsi_phy1 2>,
+			<&mdss_dsi_phy1 3>;
+		clock-names = "pll_byte_clk0", "pll_dsi_clk0",
+			"pll_byte_clk1", "pll_dsi_clk1";
+
+		qcom,mdp = <&mdss_mdp>;
+		qcom,dsi-default-panel = <&dsi_ext_bridge_1080p>;
+		qcom,panel-te-source = <0>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				dsi_anx_7625_1_out: endpoint {
+					remote-endpoint = <&anx_7625_1_in>;
+				};
+			};
+		};
+	};
+
+	dsi_dp2: qcom,dsi-display@2 {
+		compatible = "qcom,dsi-display";
+		label = "secondary";
+
+		qcom,dsi-ctrl = <&mdss_dsi0 &mdss_dsi1>;
+		qcom,dsi-phy = <&mdss_dsi_phy0 &mdss_dsi_phy1>;
+
+		clocks = <&mdss_dsi_phy0 0>,
+			<&mdss_dsi_phy0 1>,
+			<&mdss_dsi_phy1 2>,
+			<&mdss_dsi_phy1 3>;
+		clock-names = "pll_byte_clk0", "pll_dsi_clk0",
+			"pll_byte_clk1", "pll_dsi_clk1";
+
+		qcom,mdp = <&mdss_mdp>;
+		qcom,dsi-default-panel = <&dsi_ext_bridge_1080p>;
+		qcom,panel-te-source = <0>;
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+				dsi_anx_7625_2_out: endpoint {
+					remote-endpoint = <&anx_7625_2_in>;
+				};
+			};
+		};
+	};
+
+	refgen: refgen-regulator@88e7000 {
+		compatible = "qcom,refgen-regulator";
+		reg = <0x88e7000 0x60>;
+		regulator-name = "refgen";
+		regulator-enable-ramp-delay = <5>;
+	};
+
+	sde_wb: qcom,wb-display@0 {
+		compatible = "qcom,wb-display";
+		cell-index = <0>;
+		label = "wb_display";
+	};
+
+	ext_disp: qcom,msm-ext-disp {
+		compatible = "qcom,msm-ext-disp";
+
+		ext_disp_audio_codec: qcom,msm-ext-disp-audio-codec-rx {
+			compatible = "qcom,msm-ext-disp-audio-codec-rx";
+		};
+	};
+};
+
+&mdss_mdp {
+	qcom,sde-reg-dma-version = <0>;
+	sde-vdd-supply = <&mdss_core_gdsc>;
+	qcom,sde-ctl-display-pref = "primary", "none", "none",
+				"none", "none", "none";
+	qcom,sde-mixer-display-pref = "primary", "none", "none",
+				"none", "none", "none";
+	connectors = <&smmu_sde_unsec &smmu_sde_sec &dsi_dp1 &dsi_dp2>;
+
+	qcom,platform-supply-entries {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,platform-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "sde-vdd";
+			qcom,supply-min-voltage = <0>;
+			qcom,supply-max-voltage = <0>;
+			qcom,supply-enable-load = <0>;
+			qcom,supply-disable-load = <0>;
+		};
+	};
+};

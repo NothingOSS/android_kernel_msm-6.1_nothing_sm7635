@@ -1,0 +1,96 @@
+#include "pitti-audio-overlay.dtsi"
+
+&tx_swr_clk_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data0_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data1_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_clk_sleep {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data0_sleep {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&tx_swr_data1_sleep {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&rx_swr_clk_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&rx_swr_data_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&rx_swr_data1_active {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&rx_swr_clk_sleep {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&rx_swr_data_sleep {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&rx_swr_data1_sleep {
+	config {
+		drive-strength = <2>;
+	};
+};
+
+&wcd9378_rst_gpio {
+	compatible = "qcom,msm-cdc-pinctrl";
+	pinctrl-names = "aud_active", "aud_sleep";
+	pinctrl-0 = <&wcd9378_2_reset_active>;
+	pinctrl-1 = <&wcd9378_2_reset_sleep>;
+};
+
+&wcd9378_codec {
+	qcom,wcd-rst-gpio-node = <&wcd9378_rst_gpio>;
+};
+
+&pitti_snd {
+	qcom,model = "pitti-qrd-snd-card";
+};
+
+&cdc_dmic01_gpios {
+	status = "disabled";
+};
+
+&cdc_dmic23_gpios {
+	status = "disabled";
+};

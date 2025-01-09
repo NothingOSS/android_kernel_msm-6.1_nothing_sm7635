@@ -1,0 +1,156 @@
+#define MHZ_TO_KBPS(mhz, w) ((mhz * 1000000 * w) / (1024))
+
+&msm_gpu {
+	label = "kgsl-3d0";
+	compatible = "qcom,kgsl-3d0";
+	status = "ok";
+
+	reg = <0x5900000 0x90000>,
+		<0x5961000 0x800>;
+	reg-names = "kgsl_3d0_reg_memory", "cx_dbgc";
+
+	interrupts = <0 177 IRQ_TYPE_LEVEL_HIGH>;
+	interrupt-names = "kgsl_3d0_irq";
+
+	qcom,chipid = <0x07000201>;
+
+	qcom,initial-pwrlevel = <4>;
+	qcom,idle-timeout = <80>;
+	qcom,gpu-bimc-interface-clk-freq = <768000000>;
+
+	qcom,ubwc-mode = <2>;
+	qcom,min-access-length = <32>;
+
+	/* base addr, size */
+	qcom,gpu-qdss-stm = <0xe1c0000 0x40000>;
+	#cooling-cells = <2>;
+
+	clocks = <&gpucc GPU_CC_GX_GFX3D_CLK>,
+		<&gpucc GPU_CC_CXO_CLK>,
+		<&gcc GCC_BIMC_GPU_AXI_CLK>,
+		<&gpucc GPU_CC_AHB_CLK>,
+		<&gcc GCC_GPU_MEMNOC_GFX_CLK>,
+		<&gpucc GPU_CC_CX_GMU_CLK>,
+		<&gpucc GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK>,
+		<&gcc GCC_GPU_SNOC_DVM_GFX_CLK>,
+		<&rpmcc RPM_SMD_BIMC_GPU_CLK>;
+
+	clock-names = "core_clk", "rbbmtimer_clk", "mem_clk",
+			"gpu_cc_ahb", "gcc_gpu_memnoc_gfx", "gmu_clk",
+			"gpu_cc_hlos1_vote_gpu_smmu", "gcc_gpu_snoc_dvm_gfx",
+			"bimc_gpu_clk";
+
+	/* GDSC regulator names */
+	regulator-names = "vddcx", "vdd";
+	/* GDSC oxili regulators */
+	vddcx-supply = <&gpu_cx_gdsc>;
+	vdd-supply = <&gpu_gx_gdsc>;
+
+	/* Enable context aware freq. scaling */
+	qcom,enable-ca-jump;
+	/* Context aware jump busy penalty in us */
+	qcom,ca-busy-penalty = <12000>;
+	/* Context aware jump target power level */
+	qcom,ca-target-pwrlevel = <3>;
+
+	interconnect-names = "gpu_icc_path";
+	interconnects = <&bimc MASTER_GRAPHICS_3D &bimc SLAVE_EBI_CH0>;
+
+	qcom,bus-table-ddr =
+		<MHZ_TO_KBPS(0, 4)>,    /* index=0  */
+		<MHZ_TO_KBPS(200, 4)>,  /* index=1  */
+		<MHZ_TO_KBPS(300, 4)>,  /* index=2  */
+		<MHZ_TO_KBPS(451, 4)>,  /* index=3  */
+		<MHZ_TO_KBPS(547, 4)>,  /* index=4  */
+		<MHZ_TO_KBPS(681, 4)>,  /* index=5  */
+		<MHZ_TO_KBPS(768, 4)>,  /* index=6  */
+		<MHZ_TO_KBPS(1017, 4)>, /* index=7  */
+		<MHZ_TO_KBPS(1353, 4)>, /* index=8  */
+		<MHZ_TO_KBPS(1555, 4)>, /* index=9  */
+		<MHZ_TO_KBPS(1804, 4)>, /* index=10 */
+		<MHZ_TO_KBPS(2092, 4)>, /* index=11 */
+		<MHZ_TO_KBPS(2133, 4)>; /* index=12 */
+
+	zap-shader {
+		memory-region = <&pil_gpu_mem>;
+	};
+
+	/* Power levels */
+	qcom,gpu-pwrlevels {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "qcom,gpu-pwrlevels";
+
+		qcom,gpu-pwrlevel@0 {
+			reg = <0>;
+			qcom,gpu-freq = <1010000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
+
+			qcom,bus-freq = <12>;
+			qcom,bus-min = <12>;
+			qcom,bus-max = <12>;
+		};
+
+		qcom,gpu-pwrlevel@1 {
+			reg = <1>;
+			qcom,gpu-freq = <900000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_TURBO>;
+
+			qcom,bus-freq = <11>;
+			qcom,bus-min = <11>;
+			qcom,bus-max = <12>;
+		};
+
+		qcom,gpu-pwrlevel@2 {
+			reg = <2>;
+			qcom,gpu-freq = <700000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_NOM>;
+
+			qcom,bus-freq = <9>;
+			qcom,bus-min = <8>;
+			qcom,bus-max = <10>;
+		};
+
+		qcom,gpu-pwrlevel@3 {
+			reg = <3>;
+			qcom,gpu-freq = <470000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_SVS>;
+
+			qcom,bus-freq = <7>;
+			qcom,bus-min = <5>;
+			qcom,bus-max = <8>;
+		};
+
+		qcom,gpu-pwrlevel@4 {
+			reg = <4>;
+			qcom,gpu-freq = <310000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
+
+			qcom,bus-freq = <4>;
+			qcom,bus-min = <3>;
+			qcom,bus-max = <4>;
+		};
+	};
+};
+
+&soc {
+	kgsl_msm_iommu: qcom,kgsl-iommu@59a0000 {
+		compatible = "qcom,kgsl-smmu-v2";
+		reg = <0x59a0000 0x10000>;
+
+		vddcx-supply = <&gpu_cx_gdsc>;
+
+		gfx3d_user: gfx3d_user {
+			compatible = "qcom,smmu-kgsl-cb";
+			iommus = <&kgsl_smmu 0 1>;
+			qcom,iommu-dma = "disabled";
+		};
+
+		gfx3d_secure: gfx3d_secure {
+			compatible = "qcom,smmu-kgsl-cb";
+			iommus = <&kgsl_smmu 2 0>;
+			qcom,iommu-dma = "disabled";
+		};
+	};
+};

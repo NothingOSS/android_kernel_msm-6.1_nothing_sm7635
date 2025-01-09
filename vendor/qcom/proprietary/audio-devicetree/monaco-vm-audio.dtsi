@@ -1,0 +1,16 @@
+&soc {
+	snd_7255_ar: sound-adp-star {
+		compatible = "qcom,gvm-auto-spf-asoc-snd-adp-star";
+		qcom,model = "gvmauto7255-adp-star-snd-card";
+		qcom,hw_pcm_info = <0x00010100>;
+		qcom,hw_buffer_size_max = <131072>;
+		qcom,hw_period_byte_size = <4096>, <8192>;
+		qcom,hw_period_count_size = <2>, <128>;
+		asoc-codec = <&stub_codec>;
+		asoc-codec-names = "msm-stub-codec.1";
+	};
+
+	stub_codec: qcom,msm-stub-codec {
+		compatible = "qcom,msm-stub-codec";
+	};
+};

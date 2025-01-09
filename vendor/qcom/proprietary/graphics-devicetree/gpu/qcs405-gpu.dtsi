@@ -1,0 +1,126 @@
+#define MHZ_TO_KBPS(mhz, w) ((mhz * 1000000 * w) / (1024))
+
+&msm_gpu {
+	compatible = "qcom,kgsl-3d0" , "qcom,kgsl-3d";
+	reg = <0x1c00000 0x10000>,
+		<0x1c10000 0x10000>;
+	reg-names = "kgsl_3d0_reg_memory", "kgsl_3d0_shader_memory";
+
+	interrupts = <0 33 IRQ_TYPE_LEVEL_HIGH>;
+	interrupt-names = "kgsl_3d0_irq";
+
+	qcom,chipid = <0x03000620>;
+
+	qcom,initial-pwrlevel = <3>;
+
+	qcom,gpu-bimc-interface-clk-freq = <400000000>; //In Hz
+
+	clocks = <&gcc GCC_OXILI_GFX3D_CLK>,
+		<&gcc GCC_OXILI_AHB_CLK>,
+		<&gcc GCC_BIMC_GFX_CLK>,
+		<&gcc GCC_BIMC_GPU_CLK>,
+		<&gcc GCC_GTCU_AHB_CLK>,
+		<&gcc GCC_GFX_TCU_CLK>,
+		<&gcc GCC_GFX_TBU_CLK>,
+		<&rpmcc RPM_SMD_BIMC_GPU_CLK>,
+		<&gcc GCC_SMMU_CFG_CLK>,
+		<&gcc GCC_GFX_TCU_CLK>;
+
+	clock-names = "core_clk", "iface_clk", "mem_iface_clk",
+			"alt_mem_iface_clk", "gtcu_iface_clk",
+			"gtcu_clk", "gtbu_clk", "bimc_gpu_clk",
+			"gcc_smmu_cfg_clk", "gcc_gfx_tcu_clk";
+
+	interconnects = <&bimc MASTER_GRAPHICS_3D &bimc SLAVE_EBI_CH0>;
+	interconnect-names = "gpu_icc_path";
+
+	qcom,bus-table-ddr =
+			<MHZ_TO_KBPS(0, 4)>,    /* index=0 */
+			<MHZ_TO_KBPS(101, 4)>,  /* index=1 */
+			<MHZ_TO_KBPS(211, 4)>,  /* index=2 */
+			<MHZ_TO_KBPS(298, 4)>,  /* index=3 */
+			<MHZ_TO_KBPS(384, 4)>,  /* index=4 */
+			<MHZ_TO_KBPS(557, 4)>,  /* index=5 */
+			<MHZ_TO_KBPS(595, 4)>,  /* index=6 */
+			<MHZ_TO_KBPS(672, 4)>,  /* index=7 */
+			<MHZ_TO_KBPS(739, 4)>;  /* index=8 */
+
+	/* GDSC regulator names */
+	regulator-names = "vdd";
+	/* GDSC oxili regulators */
+	vdd-supply = <&gdsc_oxili_gx>;
+
+	/* Enable gpu cooling device */
+	#cooling-cells = <2>;
+
+	/* Power levels */
+	qcom,gpu-pwrlevels {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		compatible = "qcom,gpu-pwrlevels";
+
+		/* TURBO */
+		qcom,gpu-pwrlevel@0 {
+			reg = <0>;
+			qcom,gpu-freq = <598000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_TURBO>;
+			qcom,bus-freq = <8>;
+			qcom,bus-min = <7>;
+			qcom,bus-max = <8>;
+		};
+
+		/* NOM+ */
+		qcom,gpu-pwrlevel@1 {
+			reg = <1>;
+			qcom,gpu-freq = <523200000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
+			qcom,bus-freq = <6>;
+			qcom,bus-min = <5>;
+			qcom,bus-max = <7>;
+		};
+
+		/* NOM */
+		qcom,gpu-pwrlevel@2 {
+			reg = <2>;
+			qcom,gpu-freq = <484800000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_NOM>;
+			qcom,bus-freq = <5>;
+			qcom,bus-min = <4>;
+			qcom,bus-max = <6>;
+		};
+
+		/* SVS+ */
+		qcom,gpu-pwrlevel@3 {
+			reg = <3>;
+			qcom,gpu-freq = <400000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+			qcom,bus-freq = <4>;
+			qcom,bus-min = <3>;
+			qcom,bus-max = <5>;
+		};
+
+		/* SVS */
+		qcom,gpu-pwrlevel@4 {
+			reg = <4>;
+			qcom,gpu-freq = <270000000>;
+			qcom,level = <RPMH_REGULATOR_LEVEL_SVS>;
+			qcom,bus-freq = <3>;
+			qcom,bus-min = <1>;
+			qcom,bus-max = <3>;
+		};
+	};
+};
+
+&soc {
+	kgsl_msm_iommu: qcom,kgsl-iommu@1f00000 {
+		compatible = "qcom,kgsl-smmu-v2";
+		reg = <0x1f00000 0x10000>;
+
+		gfx3d_user: gfx3d_user {
+			compatible = "qcom,smmu-kgsl-cb";
+			iommus = <&gfx_iommu 0 1>;
+			qcom,iommu-dma = "disabled";
+		};
+	};
+};

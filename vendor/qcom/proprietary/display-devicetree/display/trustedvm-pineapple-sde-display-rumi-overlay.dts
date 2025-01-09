@@ -1,0 +1,12 @@
+/dts-v1/;
+/plugin/;
+
+#include "trustedvm-pineapple-sde.dtsi"
+#include "trustedvm-pineapple-sde-display-rumi.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pineapple RUMI - TrustedVM";
+	compatible = "qcom,pineapple-rumi", "qcom,pineapple", "qcom,rumi";
+	qcom,msm-id = <557 0x10000>, <557 0x20000>, <682 0x10000>, <682 0x20000>;
+	qcom,board-id = <15 0>;
+};

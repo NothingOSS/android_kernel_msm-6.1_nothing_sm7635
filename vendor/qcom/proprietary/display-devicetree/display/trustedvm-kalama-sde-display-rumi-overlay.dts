@@ -1,0 +1,12 @@
+/dts-v1/;
+/plugin/;
+
+#include "trustedvm-kalama-sde.dtsi"
+#include "trustedvm-kalama-sde-display-rumi.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Kalama Rumi";
+	compatible = "qcom,kalama-rumi", "qcom,kalama";
+	qcom,msm-id = <519 0x10000>, <519 0x20000>;
+	qcom,board-id = <15 0>;
+};

@@ -1,0 +1,103 @@
+#include <dt-bindings/interconnect/qcom,niobe.h>
+
+&pcie0 {
+	status = "ok";
+};
+
+&tlmm {
+	cnss_pins {
+		cnss_wlan_en_active: cnss_wlan_en_active {
+			mux {
+				pins = "gpio31";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio31";
+				drive-strength = <16>;
+				output-high;
+				bias-pull-up;
+			};
+		};
+
+		cnss_wlan_en_sleep: cnss_wlan_en_sleep {
+			mux {
+				pins = "gpio31";
+				function = "gpio";
+			};
+
+			config {
+				pins = "gpio31";
+				drive-strength = <2>;
+				output-low;
+				bias-pull-down;
+			};
+		};
+	};
+};
+
+&reserved_memory {
+	cnss_wlan_mem: cnss_wlan_region {
+		compatible = "shared-dma-pool";
+		alloc-ranges = <0x0 0x00000000 0x0 0xffffffff>;
+		reusable;
+		alignment = <0x0 0x400000>;
+		size = <0x0 0x2000000>;
+	};
+};
+
+&soc {
+	wlan_kiwi: qcom,cnss-kiwi@b0000000 {
+		compatible = "qcom,cnss-kiwi";
+		reg = <0xb0000000 0x10000>;
+		reg-names = "smmu_iova_ipa";
+		qcom,wlan-sw-ctrl-gpio = <&tlmm 34 0>;
+
+		supported-ids = <0x1107>;
+		wlan-en-gpio = <&tlmm 31 0>;
+		qcom,bt-en-gpio = <&tlmm 33 0>;
+		qcom,sw-ctrl-gpio = <&tlmm 32 0>;
+		/* List of GPIOs to be setup for interrupt wakeup capable */
+		mpm_wake_set_gpios = <32 34>;
+		pinctrl-names = "wlan_en_active", "wlan_en_sleep";
+		pinctrl-0 = <&cnss_wlan_en_active>;
+		pinctrl-1 = <&cnss_wlan_en_sleep>;
+		qcom,wlan;
+		qcom,wlan-rc-num = <0>;
+		qcom,wlan-ramdump-dynamic = <0x780000>;
+		qcom,wlan-cbc-enabled;
+		cnss-enable-self-recovery;
+		use-pm-domain;
+		qcom,same-dt-multi-dev;
+		/* For AOP communication, use direct QMP instead of mailbox */
+		qcom,qmp = <&aoss_qmp>;
+
+		vdd-wlan-io12-supply = <&L3B>;
+		qcom,vdd-wlan-io12-config = <1200000 1980000 0 0 1>;
+		vdd-wlan-supply = <&S5D>;
+		qcom,vdd-wlan-config = <852000 2100000 0 0 1>;
+		vdd-wlan-aon-supply = <&S6D>;
+		qcom,vdd-wlan-aon-config = <976000 2100000 0 0 1>;
+		vdd-wlan-dig-supply = <&L7B>;
+		qcom,vdd-wlan-dig-config = <1800000 2000000 0 0 1>;
+		vdd-wlan-rfa1-supply = <&S1B>;
+		qcom,vdd-wlan-rfa1-config = <1856000 2100000 0 0 1>;
+		vdd-wlan-rfa2-supply = <&S2B>;
+		qcom,vdd-wlan-rfa2-config = <1350000 2100000 0 0 1>;
+	};
+};
+
+&pcie0_rp {
+	#address-cells = <5>;
+	#size-cells = <0>;
+
+	cnss_pci0: cnss_pci0 {
+		reg = <0 0 0 0 0>;
+		qcom,iommu-group = <&cnss_ipa_wlan_iommu_group0>;
+		qcom,shared-cb;
+		memory-region = <&cnss_wlan_mem>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+	};
+};

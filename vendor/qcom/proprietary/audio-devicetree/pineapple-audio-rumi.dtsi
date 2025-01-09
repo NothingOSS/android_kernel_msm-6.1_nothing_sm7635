@@ -1,0 +1,7 @@
+#include "pineapple-audio-overlay.dtsi"
+
+&pineapple_snd {
+	compatible = "qcom,pineapple-asoc-snd-stub";
+	asoc-codec = <&stub_codec>;
+	asoc-codec-names = "msm-stub-codec.1";
+ };

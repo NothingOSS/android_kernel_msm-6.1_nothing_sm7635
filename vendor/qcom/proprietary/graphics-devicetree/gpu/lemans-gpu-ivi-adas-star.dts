@@ -1,0 +1,24 @@
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/clock/qcom,rpmh.h>
+#include <dt-bindings/soc/qcom,ipcc.h>
+#include <dt-bindings/clock/qcom,aop-qmp.h>
+#include <dt-bindings/clock/qcom,gcc-lemans.h>
+#include <dt-bindings/clock/qcom,aop-qmp.h>
+#include <dt-bindings/clock/qcom,gpucc-lemans.h>
+#include <dt-bindings/interconnect/qcom,epss-l3.h>
+#include <dt-bindings/interconnect/qcom,lemans.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
+#include <dt-bindings/interconnect/qcom,epss-l3.h>
+
+#include "lemans-gpu.dtsi"
+#include "lemans-gpu-pwrlevel-ivi-adas-star.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Lemans SoC";
+	compatible = "qcom,lemans";
+	qcom,msm-id = <533 0x10000>, <534 0x10000>;
+	qcom,board-id = <0 0>;
+};

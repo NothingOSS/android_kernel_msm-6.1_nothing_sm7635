@@ -1,0 +1,13 @@
+/dts-v1/;
+/plugin/;
+
+#include "pitti-sde-display-idp-90fps.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. Pitti IDP 90fps Display";
+	compatible = "qcom,pitti-idp", "qcom,pitti", "qcom,idp";
+	qcom,msm-id = <623 0x10000>;
+	qcom,board-id = <34 4>;
+	qcom,pmic-id-size = <9>;
+	qcom,pmic-id = <0x0 0x0 0x2E 0x0 0x0 0x0 0x0 0x0 0x0>;
+};
