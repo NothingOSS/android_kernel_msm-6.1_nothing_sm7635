@@ -193,6 +193,9 @@ static irqreturn_t pm8941_pwrkey_irq(int irq, void *_data)
 	input_report_key(pwrkey->input, pwrkey->code, sts);
 	input_sync(pwrkey->input);
 
+	dev_info(pwrkey->dev, "Key event reported: code=%d, status=%d\n",
+		pwrkey->code, sts);
+
 	return IRQ_HANDLED;
 }
 
