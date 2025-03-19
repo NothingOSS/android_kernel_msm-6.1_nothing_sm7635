@@ -1,3 +1,3 @@
-ifeq ($(call is-board-platform-in-list,pineapple), true)
-PRODUCT_PACKAGES += qbt_handler.ko
+ifeq ($(call is-board-platform-in-list,volcano), true)
+PRODUCT_PACKAGES += goodix_fp.ko
 endif

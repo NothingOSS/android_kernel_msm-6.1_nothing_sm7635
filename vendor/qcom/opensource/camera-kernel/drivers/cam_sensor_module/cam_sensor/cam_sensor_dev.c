@@ -10,11 +10,210 @@
 #include "cam_sensor_core.h"
 #include "camera_main.h"
 #include "cam_compat.h"
+#include <linux/slab.h>
 
 static struct cam_sensor_i3c_sensor_data {
 	struct cam_sensor_ctrl_t                  *s_ctrl;
 	struct completion                          probe_complete;
 } g_i3c_sensor_data[MAX_CAMERAS];
+
+// xft add debug i2c begin
+static struct kobject ext_cam_i2c_kobject;
+static struct cam_nt_i2c_info ext_i2c_info;
+
+static ssize_t ext_cam_i2c_object_show(struct kobject *k, struct attribute *attr, char *buf)
+{
+    struct kobj_attribute *kobj_attr;
+    int ret = -EIO;
+
+    kobj_attr = container_of(attr, struct kobj_attribute, attr);
+
+    if (kobj_attr->show)
+        ret = kobj_attr->show(k, kobj_attr, buf);
+
+    return ret;
+}
+
+static ssize_t ext_cam_i2c_object_store(struct kobject *k, struct attribute *attr, const char *buf, size_t size)
+{
+    struct kobj_attribute *kobj_attr;
+    int ret = -EIO;
+
+    kobj_attr = container_of(attr, struct kobj_attribute, attr);
+
+    if (kobj_attr->store)
+        ret = kobj_attr->store(k, kobj_attr, buf, sizeof(buf));
+
+    return size;
+}
+
+static const struct sysfs_ops ext_cam_i2c_object_sysfs_ops = {
+    .show = ext_cam_i2c_object_show,
+    .store = ext_cam_i2c_object_store,
+};
+
+static struct kobj_type ext_cam_i2c_object_type = {
+    .sysfs_ops = &ext_cam_i2c_object_sysfs_ops,
+    .release   = NULL,
+};
+
+static int ext_cam_i2c_init(void)
+{
+    pr_info("ext_cam_i2c_init Enter\n");
+    memset(&ext_cam_i2c_kobject, 0x00, sizeof(ext_cam_i2c_kobject));
+
+    if (kobject_init_and_add(&ext_cam_i2c_kobject, &ext_cam_i2c_object_type, NULL, "ext_cam_i2c")) {
+        kobject_put(&ext_cam_i2c_kobject);
+        return -ENOMEM;
+    }
+
+    kobject_uevent(&ext_cam_i2c_kobject, KOBJ_ADD);
+
+    return 0;
+}
+
+static ssize_t  ext_cam_i2c_show(struct kobject *kobj,
+                        struct kobj_attribute *attr, char *buf)
+{
+	pr_info("ext_cam_i2c_show Enter\n");
+	if (ext_i2c_info.status >= 2)
+	{
+		if (ext_i2c_info.is_write == 1)
+		{
+			if (ext_i2c_info.status == 2) {
+				strncpy(buf, "WRITE_SUCCESS\n", 15);
+			} else {
+				strncpy(buf, "WRITE_FAIL\n", 12);
+			}
+		} else {
+			if (ext_i2c_info.status == 2) {
+				sprintf(buf, "READ_SUCCESS_0x%x\n", ext_i2c_info.reg_data);
+			} else {
+				strncpy(buf, "READ_FAIL\n", 11);
+			}
+		}
+		pr_info("ext_cam_i2c_show buff=[%s] size = %d\n",buf, strlen(buf));
+	}
+    return strlen(buf);
+}
+
+static ssize_t  ext_cam_i2c_store(struct kobject *kobj,
+                        struct kobj_attribute *attr, const char *buf, size_t size)
+{
+	int index = 0;
+	int i = 0;
+	int count = 0;
+	char tmpStr[128] = {0};
+	ext_i2c_info.status = 0;
+	pr_info("ext_cam_i2c_store buff=[%s] size = %d\n",buf, strlen(buf));
+	for (i = 0; i < strlen(buf); i++)
+	{
+		if (buf[i] == ',')
+		{
+			memset(tmpStr, 0, sizeof(tmpStr));
+			if (i > index) {
+				strncpy(tmpStr, &buf[index], i-index);
+			}
+			index = i+1;
+
+			if (strlen(tmpStr) > 0) {
+				count++;
+				switch(count) {
+					case 1:
+						sscanf(tmpStr, "%x", &ext_i2c_info.slave_addr);
+						break;
+					case 2:
+						if (tmpStr[0] == 'r') {
+							ext_i2c_info.is_write = 0;
+						} else {
+							ext_i2c_info.is_write = 1;
+						}
+						break;
+					case 3:
+						sscanf(tmpStr, "%x", &ext_i2c_info.reg_addr);
+						break;
+					case 4:
+						sscanf(tmpStr, "%x", &ext_i2c_info.reg_data);
+						break;
+					case 5:
+						sscanf(tmpStr, "%d", &ext_i2c_info.reg_addr_type);
+						if (ext_i2c_info.reg_addr_type > 4) {
+							ext_i2c_info.reg_addr_type = 4;
+						}
+						break;
+					case 6:
+						sscanf(tmpStr, "%d", &ext_i2c_info.reg_data_type);
+						if (ext_i2c_info.reg_data_type > 4) {
+							ext_i2c_info.reg_data_type = 4;
+						}
+						break;
+					default:
+						break;
+				}
+			}
+			if (count == 6)
+			{
+				ext_i2c_info.status = 1;
+				pr_info("nthing test i2c info slaveaddr 0x%x addr 0x%x data 0x%x addr_type %d data_type %d is_write %d\n",
+					ext_i2c_info.slave_addr, ext_i2c_info.reg_addr, ext_i2c_info.reg_data,
+					ext_i2c_info.reg_addr_type, ext_i2c_info.reg_data_type, ext_i2c_info.is_write);
+				break;
+			}
+		}
+	}
+    return 1;
+}
+
+static struct kobj_attribute ext_cam_i2c_attribute =
+__ATTR(EXT_CAM_I2C_NT, 0644, ext_cam_i2c_show, ext_cam_i2c_store);
+
+int cam_nt_do_i2c_info(struct cam_sensor_ctrl_t *sctrl)
+{
+	int temp_saddr = 0;
+	int rc = 0;
+	struct cam_sensor_i2c_reg_setting write_setting;
+	struct cam_sensor_i2c_reg_array reg_setting;
+
+	if (ext_i2c_info.status == 1) {
+		temp_saddr = sctrl->io_master_info.cci_client->sid;
+		sctrl->io_master_info.cci_client->sid = ext_i2c_info.slave_addr >> 1;
+		if (ext_i2c_info.is_write == 1)
+		{
+			reg_setting.reg_addr = ext_i2c_info.reg_addr;
+			reg_setting.reg_data = ext_i2c_info.reg_data;
+			reg_setting.delay = 0;
+			reg_setting.data_mask = 0xff;
+			write_setting.reg_setting = &reg_setting;
+			write_setting.size = 1;
+			write_setting.addr_type = ext_i2c_info.reg_addr_type;
+			write_setting.data_type = ext_i2c_info.reg_data_type;
+			write_setting.delay = 0;
+			write_setting.read_buff = NULL;
+			write_setting.read_buff_len = 0;
+			rc = camera_io_dev_write(
+				&(sctrl->io_master_info),
+				&(write_setting));
+		} else {
+			rc = camera_io_dev_read(
+				&(sctrl->io_master_info),
+				ext_i2c_info.reg_addr,
+				&ext_i2c_info.reg_data,
+				ext_i2c_info.reg_addr_type,
+				ext_i2c_info.reg_data_type,
+				true);
+		}
+		if (rc) {
+			ext_i2c_info.status = 3;
+		} else {
+			ext_i2c_info.status = 2;
+		}
+		sctrl->io_master_info.cci_client->sid = temp_saddr;
+	}
+	return 0;
+}
+
+// xft add debug i2c end
+
 
 struct completion *cam_sensor_get_i3c_completion(uint32_t index)
 {
@@ -638,6 +837,10 @@ int cam_sensor_driver_init(void)
 	int rc;
 	struct device_node                      *dev;
 	int num_entries = 0;
+	int tmp_rc = 0;
+
+	tmp_rc = ext_cam_i2c_init();
+	tmp_rc = sysfs_create_file(&ext_cam_i2c_kobject, &ext_cam_i2c_attribute.attr);
 
 	rc = platform_driver_register(&cam_sensor_platform_driver);
 	if (rc < 0) {

@@ -1,0 +1,6 @@
+config SND_SOC_TFA98XX
+	bool "Support Goodix smartpa driver"
+	depends on I2C = y && REGMAP = y
+	default y
+	help
+	  Select this option to enable support for Goodix smartpa driver tfa98xx

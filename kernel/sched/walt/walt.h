@@ -74,6 +74,8 @@ enum freq_caps {
 	MAX_FREQ_CAP,
 };
 
+#define WALT_RT_PUSH_THRESHOLD_NS	200000
+
 #define WALT_LOW_LATENCY_PROCFS		BIT(0)
 #define WALT_LOW_LATENCY_BINDER		BIT(1)
 #define WALT_LOW_LATENCY_PIPELINE	BIT(2)
@@ -1185,6 +1187,9 @@ extern struct rq *__migrate_task(struct rq *rq, struct rq_flags *rf,
 DECLARE_PER_CPU(u64, rt_task_arrival_time);
 extern int walt_get_mvp_task_prio(struct task_struct *p);
 extern void walt_cfs_deactivate_mvp_task(struct rq *rq, struct task_struct *p);
+
+void walt_rt_energy_aware_wake_cpu(struct task_struct *task, struct cpumask *lowest_mask,
+				int ret, int *best_cpu);
 
 enum WALT_DEBUG_FEAT {
 	WALT_BUG_UPSTREAM,

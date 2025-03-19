@@ -96,7 +96,8 @@
 		};
 	};
 
-	sys-therm-5 {
+	//sys-therm-5 {
+	nrpa_ntc {
 		cooling-maps {
 			display_cdev1 {
 				trip = <&display_test_config1>;
@@ -119,4 +120,48 @@
 			};
 		};
 	};
+
+	socd {
+		polling-delay-passive = <100>;
+		polling-delay = <0>;
+		thermal-sensors = <&bcl_soc>;
+
+		trips {
+			thermal-engine-trip {
+				temperature = <100>;
+				hysteresis = <0>;
+				type = "passive";
+			};
+
+			thermal-hal-trip {
+				temperature = <100>;
+				hysteresis = <0>;
+				type = "passive";
+			};
+
+			socd-trip {
+				temperature = <100>;
+				hysteresis = <0>;
+				type = "passive";
+			};
+		};
+	};
+};
+
+&soc {
+    shell_front {
+        compatible = "nothing,virtual-ntc";
+    };
+
+    shell_frame {
+        compatible = "nothing,virtual-ntc";
+    };
+
+    shell_back {
+        compatible = "nothing,virtual-ntc";
+    };
+
+    shell_max {
+        compatible = "nothing,virtual-ntc";
+    };
 };

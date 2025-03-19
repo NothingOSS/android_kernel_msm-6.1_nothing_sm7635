@@ -19,6 +19,10 @@
 
 extern struct completion *cam_sensor_get_i3c_completion(uint32_t index);
 
+/*xft begin*/
+extern int cam_nt_do_i2c_info(struct cam_sensor_ctrl_t *sctrl);
+/*xft end*/
+
 static int cam_sensor_notify_v4l2_error_event(
 	struct cam_sensor_ctrl_t *s_ctrl,
 	uint32_t error_type, uint32_t error_code)
@@ -1943,6 +1947,10 @@ int cam_sensor_apply_settings(struct cam_sensor_ctrl_t *s_ctrl,
 			}
 		}
 	}
+
+	/*xft begin*/
+	cam_nt_do_i2c_info(s_ctrl);
+	/*xft end*/
 
 	return rc;
 }

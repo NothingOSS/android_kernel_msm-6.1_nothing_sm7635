@@ -25,6 +25,7 @@
 #include <linux/suspend.h>
 #include <linux/termios.h>
 #include <linux/ipc_logging.h>
+#include <linux/nt_error_report.h>
 
 #include "rpmsg_internal.h"
 #include "qcom_glink_native.h"
@@ -73,6 +74,9 @@ do {									\
 
 #define RPM_GLINK_CID_MIN	1
 #define RPM_GLINK_CID_MAX	65536
+
+#define FIRST_ALERT_TIME 20
+#define ALERT_TIME 500
 
 static int should_wake;
 static int glink_resume_pkt;
@@ -186,6 +190,9 @@ struct qcom_glink {
 	bool sent_read_notify;
 
 	void *ilc;
+
+	int timeout_count;
+	int threshold;
 };
 
 enum {
@@ -1877,6 +1884,14 @@ static int qcom_glink_request_intent(struct qcom_glink *glink,
 	if (!ret) {
 		dev_err(glink->dev, "%s: intent request ack timed out (%d)\n",
 			channel->name, channel->intent_timeout_count);
+		glink->timeout_count++;
+		if (!(glink->timeout_count % glink->threshold)) {
+			glink->threshold = ALERT_TIME;
+			dev_err(glink->dev,
+					"glink_timeout_channel: %s, glink_timeout_count: %d\n",
+					glink->name, glink->timeout_count);
+			nt_er_in_schedule(NT_GLINK_ERR);
+		}
 		ret = -ETIMEDOUT;
 		channel->intent_timeout_count++;
 		if (channel->intent_timeout_count >= MAX_INTENT_TIMEOUTS)
@@ -2525,6 +2540,7 @@ struct qcom_glink *qcom_glink_native_probe(struct device *dev,
 	scnprintf(glink->irqname, 32, "glink-native-%s", glink->name);
 
 	glink->ilc = ipc_log_context_create(GLINK_LOG_PAGE_CNT, glink->name, 0);
+	glink->threshold = FIRST_ALERT_TIME;
 
 	return glink;
 }

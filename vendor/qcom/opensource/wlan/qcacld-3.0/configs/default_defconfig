@@ -1518,7 +1518,7 @@ endif
 
 ifeq ($(CONFIG_CNSS_QCA6750), y)
 #Enable 6 GHz Band
-CONFIG_BAND_6GHZ := y
+CONFIG_BAND_6GHZ := n
 CONFIG_RX_FISA := y
 CONFIG_MORE_TX_DESC := y
 	ifeq ($(CONFIG_SLUB_DEBUG_ON), y)
@@ -1529,7 +1529,7 @@ endif
 ifeq ($(CONFIG_CNSS_QCA6490), y)
 
 #Enable 6 GHz Band
-CONFIG_BAND_6GHZ := y
+CONFIG_BAND_6GHZ := n
 CONFIG_RX_FISA := y
 CONFIG_MORE_TX_DESC := y
 
@@ -1537,7 +1537,7 @@ endif
 
 ifeq (y,$(findstring y,$(CONFIG_CNSS_KIWI) $(CONFIG_CNSS_KIWI_V2)))
 #Enable 6 GHz Band
-CONFIG_BAND_6GHZ := y
+CONFIG_BAND_6GHZ := n
 CONFIG_RX_FISA := y
 CONFIG_MORE_TX_DESC := y
 endif

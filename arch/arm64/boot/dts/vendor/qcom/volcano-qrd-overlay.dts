@@ -2,12 +2,15 @@
 /plugin/;
 
 #include "volcano-qrd.dtsi"
+#include "volcano-arca-common-overlay.dtsi"
 
 / {
 	model = "Qualcomm Technologies, Inc. Volcano QRD";
 	compatible = "qcom,volcano-qrd", "qcom,volcano", "qcom,volcanop-qrd", "qcom,volcanop", "qcom,qrd";
 	qcom,msm-id = <636 0x10000>, <640 0x10000>, <641 0x10000>;
 	qcom,board-id = <11 0>;
+
+	qcom,oem-id = <1>;
 };
 
 
@@ -17,8 +20,19 @@
 	vdd3-supply = <&L17B>;
 
 	qcom,param-override-seq =
-		<0xb 0x51
-		 0x6 0x57>;
+		<0x6 0x51
+		 0x1 0x53
+		 0x5 0x54
+		 0x3 0x55
+		 0x6 0x57
+		 0x3 0x59>;
+	qcom,host-param-override-seq =
+		<0x6 0x51
+		 0x2 0x53
+		 0x4 0x54
+		 0x0 0x55
+		 0x6 0x57
+		 0x0 0x59>;
 };
 
 &eusb2_phy0 {

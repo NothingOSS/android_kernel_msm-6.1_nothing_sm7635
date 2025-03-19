@@ -90,6 +90,7 @@ def define_pitti():
         "drivers/regulator/debug-regulator.ko",
         "drivers/regulator/proxy-consumer.ko",
         "drivers/regulator/qcom_pm8008-regulator.ko",
+	"drivers/regulator/wl28681-regulator.ko",
         "drivers/regulator/qpnp-lcdb-regulator.ko",
         "drivers/regulator/qti-fixed-regulator.ko",
         "drivers/regulator/qti-ocp-notifier.ko",

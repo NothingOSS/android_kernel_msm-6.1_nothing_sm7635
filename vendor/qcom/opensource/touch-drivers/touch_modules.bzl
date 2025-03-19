@@ -45,15 +45,17 @@ module_entry(
     name = "focaltech_fts",
     config_option = "CONFIG_TOUCH_FOCALTECH",
     srcs = [
-            "focaltech_touch/focaltech_core.c",
-            "focaltech_touch/focaltech_esdcheck.c",
-            "focaltech_touch/focaltech_ex_fun.c",
-            "focaltech_touch/focaltech_ex_mode.c",
-            "focaltech_touch/focaltech_flash/focaltech_upgrade_ft3518.c",
-            "focaltech_touch/focaltech_flash.c",
-            "focaltech_touch/focaltech_gesture.c",
-            "focaltech_touch/focaltech_i2c.c",
-            "focaltech_touch/focaltech_point_report_check.c"
+            "focaltech/focaltech_core.c",
+            "focaltech/focaltech_esdcheck.c",
+            "focaltech/focaltech_ex_fun.c",
+            "focaltech/focaltech_ex_mode.c",
+            "focaltech/focaltech_flash/focaltech_upgrade_ft3683g.c",
+            "focaltech/focaltech_flash/focaltech_upgrade_ft3681.c",
+            "focaltech/focaltech_flash.c",
+            "focaltech/focaltech_gesture.c",
+            "focaltech/focaltech_spi_v2.c",
+            "focaltech/focaltech_point_report_check.c",
+            "focaltech/focaltech_debug.c"
     ]
 )
 

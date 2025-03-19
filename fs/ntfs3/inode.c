@@ -370,8 +370,10 @@ next_attr:
 			 * ntfs_get_wsl_perm updates inode->i_uid, inode->i_gid, inode->i_mode
 			 */
 			inode->i_mode = mode;
-			ntfs_get_wsl_perm(inode);
-			mode = inode->i_mode;
+			/*ntfs_get_wsl_perm(inode);
+			mode = inode->i_mode;*/
+			inode->i_uid = sbi->options->fs_uid;
+			inode->i_gid = sbi->options->fs_gid;
 		}
 		goto next_attr;
 
@@ -1626,7 +1628,10 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
 	 */
 	d_instantiate(dentry, inode);
 
-	ntfs_save_wsl_perm(inode);
+	//ntfs_save_wsl_perm(inode);
+	inode->i_mode |= (0777 & sbi->options->fs_fmask_inv);
+	inode->i_uid = sbi->options->fs_uid;
+	inode->i_gid = sbi->options->fs_gid;
 	mark_inode_dirty(dir);
 	mark_inode_dirty(inode);
 

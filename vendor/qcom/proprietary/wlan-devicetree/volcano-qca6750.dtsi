@@ -99,7 +99,7 @@
 		qcom,qmp = <&aoss_qmp>;
 
 		qcom,vreg_ol_cpr ="s3b";
-
+		use-nv-mac;
 		icnss_cdev_apss: qcom,icnss_cdev1 {
 			#cooling-cells = <2>;
 		};

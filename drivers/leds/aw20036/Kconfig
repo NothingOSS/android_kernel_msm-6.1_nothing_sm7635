@@ -1,0 +1,7 @@
+config LEDS_AW20036
+	tristate "LED Support for AW20036"
+	depends on LEDS_CLASS && I2C
+	help
+		this option enables support for the AW20036RGB LED connected
+		through I2C. Say Y to enable support for the AW20036LED
+		light automatically.

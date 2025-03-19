@@ -30,7 +30,8 @@
 #include "cam_compat.h"
 #include "camera_main.h"
 
-#define CAM_REQ_MGR_EVENT_MAX 30
+#define CAM_REQ_MGR_EVENT_MAX 240
+
 #define CAM_I3C_MASTER_COMPAT "qcom,geni-i3c"
 
 static struct cam_req_mgr_device g_dev;

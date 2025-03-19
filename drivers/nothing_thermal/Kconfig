@@ -1,0 +1,9 @@
+#
+# Generic thermal sysfs drivers configuration
+#
+
+config NOTHING_VIRTUAL_NTC
+	  tristate "Virtual NTC driver"
+	  default n
+	  help
+	    Provide the thermal zones for virtual NTCs.

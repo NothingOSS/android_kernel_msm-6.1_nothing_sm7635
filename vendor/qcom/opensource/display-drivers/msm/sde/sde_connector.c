@@ -22,9 +22,19 @@
 #include "sde_vm.h"
 #include <drm/drm_probe_helper.h>
 #include <linux/version.h>
+#include "dsi_panel.h"
 
 #define BL_NODE_NAME_SIZE 32
 #define HDR10_PLUS_VSIF_TYPE_CODE      0x81
+
+#define PANEL_FEATURE_NODE_FLAG
+#ifdef PANEL_FEATURE_NODE_FLAG
+static struct kobject *k_obj = NULL;
+int panel_feature_node_exist = 0;
+struct sde_connector *panel_feature_sde_conn;
+unsigned long fp_status = 0;
+EXPORT_SYMBOL(fp_status);
+#endif
 
 /* Autorefresh will occur after FRAME_CNT frames. Large values are unlikely */
 #define AUTOREFRESH_MAX_FRAME_CNT 6
@@ -139,6 +149,11 @@ static int sde_backlight_device_update_status(struct backlight_device *bd)
 		return -EINVAL;
 	}
 
+	if (c_conn) {
+		schedule_work(&c_conn->set_brightness_work);
+		return 0;
+	}
+
 	brightness = bd->props.brightness;
 
 	if ((bd->props.power != FB_BLANK_UNBLANK) ||
@@ -199,6 +214,13 @@ done:
 	return rc;
 }
 
+int nt_update_backlight(void)
+{
+	int rc = 0;
+	rc = sde_backlight_device_update_status(panel_feature_sde_conn->bl_device);
+	return rc;
+}
+
 static int sde_backlight_device_get_brightness(struct backlight_device *bd)
 {
 	return 0;
@@ -252,7 +274,8 @@ static int sde_backlight_setup(struct sde_connector *c_conn,
 	props.type = BACKLIGHT_RAW;
 	props.power = FB_BLANK_UNBLANK;
 	props.max_brightness = bl_config->brightness_max_level;
-	props.brightness = bl_config->brightness_max_level;
+	props.brightness = bl_config->brightness_max_level * 4 / 10;
+
 	snprintf(bl_node_name, BL_NODE_NAME_SIZE, "panel%u-backlight",
 							display_count);
 	c_conn->bl_device = backlight_device_register(bl_node_name, dev->dev, c_conn,
@@ -280,6 +303,10 @@ static int sde_backlight_setup(struct sde_connector *c_conn,
 				    PTR_ERR(c_conn->cdev));
 		c_conn->cdev = NULL;
 	}
+
+	SDE_INFO("set panel_feature_sde_conn in sde_backlight_setup\n");
+	panel_feature_sde_conn = c_conn;
+
 done:
 	display_count++;
 
@@ -1010,6 +1037,120 @@ static int _sde_connector_update_dirty_properties(
 	return 0;
 }
 
+static int _sde_connector_update_finger_hbm_status(
+				struct sde_connector *c_conn)
+{
+	struct dsi_display * display;
+
+	if (!c_conn) {
+		SDE_ERROR("invalid argument\n");
+		return -EINVAL;
+	}
+
+	display = (struct dsi_display *) c_conn->display;
+	if (!display || !display->panel) {
+		SDE_ERROR("Invalid params(s) dsi_display %pK, panel %pK\n",
+					display, ((display) ? display->panel : NULL));
+		return -EINVAL;
+	}
+
+	if (!display->panel->panel_initialized)
+		return 0;
+
+	if (fp_status == display->panel->lhbm_state)
+		return 0;
+
+	if (fp_status && display->panel->cur_mode->timing.refresh_rate != 120) {
+		SDE_ERROR("fps not equal 120, wait!");
+		return 0;
+	}
+
+	dsi_display_set_lhbm_state(display, fp_status);
+
+	return 0;
+}
+
+static void sde_connector_set_brightness_work(struct work_struct *work)
+{
+	struct sde_connector *c_conn;
+	struct backlight_device *bd;
+	int brightness;
+	struct dsi_display *display;
+	int bl_lvl;
+	struct drm_event event;
+	int rc = 0;
+	struct sde_kms *sde_kms;
+
+	c_conn = container_of(work, struct sde_connector, set_brightness_work);
+	if (!c_conn) {
+		SDE_ERROR("not able to get connector object\n");
+		return;
+	}
+	bd = c_conn->bl_device;
+
+	sde_kms = sde_connector_get_kms(&c_conn->base);
+	if (!sde_kms) {
+		SDE_ERROR("invalid kms\n");
+		return;
+	}
+
+	brightness = bd->props.brightness;
+
+	if ((bd->props.power != FB_BLANK_UNBLANK) ||
+			(bd->props.state & BL_CORE_FBBLANK) ||
+			(bd->props.state & BL_CORE_SUSPENDED))
+		brightness = 0;
+
+	display = (struct dsi_display *) c_conn->display;
+	if (brightness > display->panel->bl_config.brightness_max_level)
+		brightness = display->panel->bl_config.brightness_max_level;
+	if (brightness > c_conn->thermal_max_brightness)
+		brightness = c_conn->thermal_max_brightness;
+
+	display->panel->bl_config.brightness = brightness;
+	/* map UI brightness into driver backlight level with rounding */
+	bl_lvl = mult_frac(brightness, display->panel->bl_config.bl_max_level,
+			display->panel->bl_config.brightness_max_level);
+
+	if (!bl_lvl && brightness)
+		bl_lvl = 1;
+
+	if (!c_conn->allow_bl_update) {
+		c_conn->unset_bl_level = bl_lvl;
+		return;
+	}
+
+	sde_vm_lock(sde_kms);
+
+	if (!sde_vm_owns_hw(sde_kms)) {
+		SDE_DEBUG("skipping bl update due to HW unavailablity\n");
+		goto done;
+	}
+
+	if (c_conn->ops.set_backlight) {
+		/* skip notifying user space if bl is 0 */
+		if (brightness != 0) {
+			event.type = DRM_EVENT_SYS_BACKLIGHT;
+			event.length = sizeof(u32);
+			msm_mode_object_event_notify(&c_conn->base.base,
+				c_conn->base.dev, &event, (u8 *)&brightness);
+		}
+		rc = c_conn->ops.set_backlight(&c_conn->base,
+				c_conn->display, bl_lvl);
+		if (!rc) {
+			sde_dimming_bl_notify(c_conn, &display->panel->bl_config);
+			if (c_conn->base.state && c_conn->base.state->crtc) {
+				sde_crtc_backlight_notify(c_conn->base.state->crtc, brightness,
+					display->panel->bl_config.brightness_max_level);
+			}
+		}
+		c_conn->unset_bl_level = 0;
+	}
+
+done:
+	sde_vm_unlock(sde_kms);
+}
+
 struct sde_connector_dyn_hdr_metadata *sde_connector_get_dyn_hdr_meta(
 		struct drm_connector *connector)
 {
@@ -1092,6 +1233,14 @@ int sde_connector_prepare_commit(struct drm_connector *connector)
 	if (!c_conn->display) {
 		SDE_ERROR("invalid connector display\n");
 		return -EINVAL;
+	}
+
+	if (c_conn->connector_type == DRM_MODE_CONNECTOR_DSI) {
+		//only dsi panel need open hbm
+		rc = _sde_connector_update_finger_hbm_status(c_conn);
+		if (rc) {
+			SDE_ERROR("update hbm status failed\n");
+		}
 	}
 
 	if (!c_conn->ops.prepare_commit)
@@ -2545,6 +2694,263 @@ static const struct file_operations conn_cmd_rx_fops = {
 	.write =        _sde_debugfs_conn_cmd_rx_write,
 };
 
+ssize_t nt_tx_cmd(struct sde_connector *c_conn, const char *buf, size_t count)
+{
+	struct sde_vm_ops *vm_ops;
+	struct sde_kms *sde_kms;
+	char *input, *token, *input_copy, *input_dup = NULL;
+	const char *delim = " ";
+	char buffer[MAX_CMD_PAYLOAD_SIZE] = {0};
+	int rc = 0, strtoint = 0;
+	u32 buf_size = 0;
+
+	sde_kms = sde_connector_get_kms(&c_conn->base);
+	if (!sde_kms) {
+		SDE_ERROR("invalid kms\n");
+		return -EINVAL;
+	}
+
+	if (!c_conn->ops.cmd_transfer) {
+		SDE_ERROR("no cmd transfer support for connector name %s\n",
+				c_conn->name);
+		return -EINVAL;
+	}
+
+	input = kzalloc(count + 1, GFP_KERNEL);
+	if (!input)
+		return -ENOMEM;
+
+	vm_ops = sde_vm_get_ops(sde_kms);
+	sde_vm_lock(sde_kms);
+	if (vm_ops && vm_ops->vm_owns_hw && !vm_ops->vm_owns_hw(sde_kms)) {
+		SDE_ERROR("op not supported due to HW unavailablity\n");
+		rc = -EOPNOTSUPP;
+		goto end;
+	}
+
+	strncpy(input, buf, count);
+	input[count] = '\0';
+
+	SDE_INFO("Command requested for transfer to panel: %s\n", input);
+
+	input_copy = kstrdup(input, GFP_KERNEL);
+	if (!input_copy) {
+		rc = -ENOMEM;
+		goto end;
+	}
+
+	input_dup = input_copy;
+	token = strsep(&input_copy, delim);
+	while (token) {
+		rc = kstrtoint(token, 0, &strtoint);
+		if (rc) {
+			SDE_ERROR("input buffer conversion failed\n");
+			goto end1;
+		}
+
+		buffer[buf_size++] = (strtoint & 0xff);
+		if (buf_size >= MAX_CMD_PAYLOAD_SIZE) {
+			SDE_ERROR("buffer size exceeding the limit %d\n",
+					MAX_CMD_PAYLOAD_SIZE);
+			rc = -EFAULT;
+			goto end1;
+		}
+		token = strsep(&input_copy, delim);
+	}
+	SDE_DEBUG("command packet size in bytes: %u\n", buf_size);
+	if (!buf_size) {
+		rc = -EFAULT;
+		goto end1;
+	}
+
+	mutex_lock(&c_conn->lock);
+	rc = c_conn->ops.cmd_transfer(&c_conn->base, c_conn->display, buffer,
+			buf_size);
+	c_conn->last_cmd_tx_sts = !rc ? true : false;
+	mutex_unlock(&c_conn->lock);
+
+	rc = 0;
+end1:
+	kfree(input_dup);
+end:
+	sde_vm_unlock(sde_kms);
+	kfree(input);
+	return rc;
+
+}
+
+ssize_t nt_rx_cmd(struct sde_connector *c_conn, const char *buf, size_t count)
+{
+	char *input, *token, *input_copy, *input_dup = NULL;
+	const char *delim = " ";
+	unsigned char buffer[MAX_CMD_PAYLOAD_SIZE] = {0};
+	int rc = 0, strtoint = 0;
+	u32 buf_size = 0;
+
+	if (!c_conn->ops.cmd_receive) {
+		SDE_ERROR("no cmd receive support for connector name %s\n",
+				c_conn->name);
+		return -EINVAL;
+	}
+
+	memset(c_conn->cmd_rx_buf, 0x0, MAX_CMD_RECEIVE_SIZE);
+	c_conn->rx_len = 0;
+
+	input = kzalloc(count + 1, GFP_KERNEL);
+	if (!input)
+		return -ENOMEM;
+
+	strncpy(input, buf, count);
+	input[count] = '\0';
+
+	SDE_INFO("Command requested for rx from panel: %s\n", input);
+
+	input_copy = kstrdup(input, GFP_KERNEL);
+	if (!input_copy) {
+		rc = -ENOMEM;
+		goto end;
+	}
+
+	input_dup = input_copy;
+	token = strsep(&input_copy, delim);
+	while (token) {
+		rc = kstrtoint(token, 0, &strtoint);
+		if (rc) {
+			SDE_ERROR("input buffer conversion failed\n");
+			goto end1;
+		}
+
+		buffer[buf_size++] = (strtoint & 0xff);
+		if (buf_size >= MAX_CMD_PAYLOAD_SIZE) {
+			SDE_ERROR("buffer size = %d exceeding the limit %d\n",
+					buf_size, MAX_CMD_PAYLOAD_SIZE);
+			rc = -EFAULT;
+			goto end1;
+		}
+		token = strsep(&input_copy, delim);
+	}
+
+	if (!buffer[0] || buffer[0] > MAX_CMD_RECEIVE_SIZE) {
+		SDE_ERROR("invalid rx length\n");
+		rc = -EFAULT;
+		goto end1;
+	}
+
+	SDE_DEBUG("command packet size in bytes: %u, rx len: %u\n",
+			buf_size, buffer[0]);
+	if (!buf_size) {
+		rc = -EFAULT;
+		goto end1;
+	}
+
+	mutex_lock(&c_conn->lock);
+	c_conn->rx_len = c_conn->ops.cmd_receive(c_conn->display, buffer + 1,
+			buf_size - 1, c_conn->cmd_rx_buf, buffer[0], NULL);
+	mutex_unlock(&c_conn->lock);
+
+	if (c_conn->rx_len <= 0)
+		rc = -EINVAL;
+	else
+		rc = 0;
+end1:
+	kfree(input_dup);
+end:
+	kfree(input);
+	return rc;
+}
+
+static ssize_t panel_id1_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	const char *read_id_cmd = "0x01 0x06 0x01 0x00 0x01 0x00 0x00 0x01 0xDA";
+	struct sde_connector *sde_conn = panel_feature_sde_conn;
+	int code_len = 44;
+
+	nt_rx_cmd(sde_conn, read_id_cmd, code_len);
+
+	return sprintf(buf, "%.2x\n", sde_conn->cmd_rx_buf[0]);
+}
+
+static ssize_t panel_id2_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	const char *read_id_cmd = "0x01 0x06 0x01 0x00 0x01 0x00 0x00 0x01 0xDB";
+	struct sde_connector *sde_conn = panel_feature_sde_conn;
+	int code_len = 44;
+
+	nt_rx_cmd(sde_conn, read_id_cmd, code_len);
+
+	return sprintf(buf, "%.2x\n", sde_conn->cmd_rx_buf[0]);
+}
+
+static ssize_t panel_id3_show(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	const char *read_id_cmd = "0x01 0x06 0x01 0x00 0x01 0x00 0x00 0x01 0xDC";
+	struct sde_connector *sde_conn = panel_feature_sde_conn;
+	int code_len = 44;
+
+	nt_rx_cmd(sde_conn, read_id_cmd, code_len);
+
+	return sprintf(buf, "%.2x\n", sde_conn->cmd_rx_buf[0]);
+}
+
+static ssize_t store_fp_status(struct kobject *kobj,struct kobj_attribute *attr,const char *buf, size_t size)
+{
+	int rc = 0;
+	int mode = 0;
+	struct sde_connector *sde_conn = panel_feature_sde_conn;
+
+	rc = kstrtoul(buf, 0, &fp_status);
+
+	if (!fp_status) {
+		mutex_lock(&sde_conn->lock);
+		mode = sde_conn->dpms_mode;
+		mutex_unlock(&sde_conn->lock);
+		if (mode != DRM_MODE_DPMS_OFF)
+			rc = _sde_connector_update_finger_hbm_status(sde_conn);
+	}
+
+	return size;
+}
+
+static ssize_t show_fp_status(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	return sprintf(buf, "%d\n", fp_status);
+}
+
+static ssize_t show_brightnessid(struct kobject *kobj, struct kobj_attribute *attr, char *buf)
+{
+	u16 brightnss = 0;
+
+	const char *read_id_cmd = "0x02 0x06 0x01 0x00 0x01 0x00 0x00 0x01 0x51";
+	struct sde_connector *sde_conn = panel_feature_sde_conn;
+	int code_len = 44;
+
+	nt_rx_cmd(sde_conn, read_id_cmd, code_len);
+
+	brightnss = (sde_conn->cmd_rx_buf[0] << 8) | sde_conn->cmd_rx_buf[1];
+
+	return sprintf(buf, "%d\n", brightnss);
+}
+
+static struct kobj_attribute panel_id1_attribute = __ATTR(panel_id1, S_IRUGO | S_IWUSR, panel_id1_show, NULL);
+static struct kobj_attribute panel_id2_attribute = __ATTR(panel_id2, S_IRUGO | S_IWUSR, panel_id2_show, NULL);
+static struct kobj_attribute panel_id3_attribute = __ATTR(panel_id3, S_IRUGO | S_IWUSR, panel_id3_show, NULL);
+static struct kobj_attribute fp_status_attribute = __ATTR(fp_status, S_IRUGO | S_IWUSR, show_fp_status, store_fp_status);
+static struct kobj_attribute brightnessid_attribute = __ATTR(brightnessid, S_IRUGO | S_IWUSR, show_brightnessid, NULL);
+
+static struct attribute *panel_feature_attributes[] = {
+	&panel_id1_attribute.attr,
+	&panel_id2_attribute.attr,
+	&panel_id3_attribute.attr,
+	&fp_status_attribute.attr,
+	&brightnessid_attribute.attr,
+	NULL,
+};
+
+static const struct attribute_group panel_feature_attr_group = {
+	.attrs = panel_feature_attributes,
+};
+
+
 #if IS_ENABLED(CONFIG_DEBUG_FS)
 /**
  * sde_connector_init_debugfs - initialize connector debugfs
@@ -2609,8 +3015,20 @@ static int sde_connector_init_debugfs(struct drm_connector *connector)
 }
 #endif /* CONFIG_DEBUG_FS */
 
+int nt_is_panel_detected(void);
+
 static int sde_connector_late_register(struct drm_connector *connector)
 {
+	pr_err("sde_connector_late_register enter!\n");
+
+	/*add nt_is_panel_detected() to differ whether panel name is correct. */
+	if (!panel_feature_node_exist && nt_is_panel_detected()) {
+		k_obj = kobject_create_and_add("panel_feature", NULL);
+		if (sysfs_create_group(k_obj, &panel_feature_attr_group))
+			pr_err("panel_feature_attr_group error!\n");
+		panel_feature_node_exist = 1;
+	}
+
 	return sde_connector_init_debugfs(connector);
 }
 
@@ -3498,6 +3916,8 @@ struct drm_connector *sde_connector_init(struct drm_device *dev,
 
 	INIT_DELAYED_WORK(&c_conn->status_work,
 			sde_connector_check_status_work);
+
+	INIT_WORK(&c_conn->set_brightness_work, sde_connector_set_brightness_work);
 
 	return &c_conn->base;
 

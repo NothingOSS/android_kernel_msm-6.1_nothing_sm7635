@@ -18,6 +18,12 @@
 
 #define FSA4480_I2C_NAME	"fsa4480-driver"
 
+#define FSA4480_DEVICE_ID       0x00
+#define FSA4480_SWITCH_STATUS   0x06
+#define FSA4480_FUNCTION_ENABLE 0x12
+#define FSA4480_JACK_STATUS     0x17
+#define FSA4480_JACK_FLAG       0x18
+#define FSA4480_DELAY_L_L       0x20
 #define FSA4480_SWITCH_SETTINGS 0x04
 #define FSA4480_SWITCH_CONTROL  0x05
 #define FSA4480_SWITCH_STATUS1  0x07
@@ -45,6 +51,117 @@ struct fsa4480_priv {
 	u32 use_powersupply;
 };
 
+static int device_id = 0;
+static int g_dio4482_solution = 0;
+static int g_wcd_sleep_flag = 0;
+static bool dump_enable = true;
+
+bool is_dio4482(void)
+{
+	if (device_id == 0xF3)
+		return true;
+
+	return false;
+}
+EXPORT_SYMBOL_GPL(is_dio4482);
+
+int odm_wcd_sleep_before(void)
+{
+	g_wcd_sleep_flag = 1;
+	return 0;
+}
+EXPORT_SYMBOL_GPL(odm_wcd_sleep_before);
+
+int odm_wcd_sleep_after(void)
+{
+	g_wcd_sleep_flag = 0;
+	return 0;
+}
+EXPORT_SYMBOL_GPL(odm_wcd_sleep_after);
+
+static int is_odm_wcd_sleep_state(void)
+{
+	return g_wcd_sleep_flag;
+}
+
+int is_dio4482_solution(void)
+{
+	return !!g_dio4482_solution;
+}
+
+static void fsa_dump_reg(struct fsa4480_priv *fsa_priv)
+{
+	int value = 0;
+
+	if (!dump_enable)
+		return;
+
+	regmap_read(fsa_priv->regmap, FSA4480_DEVICE_ID, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x00]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x01, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x01]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x02, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x02]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x03, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x03]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SWITCH_SETTINGS, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x04]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SWITCH_CONTROL, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x05]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SWITCH_STATUS, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x06]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SWITCH_STATUS1, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x07]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SLOW_L, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x08]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SLOW_R, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x09]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SLOW_MIC, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x0A]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SLOW_SENSE, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x0B]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_SLOW_GND, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x0C]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_DELAY_L_R, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x0D]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_DELAY_L_MIC, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x0E]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_DELAY_L_SENSE, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x0F]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_DELAY_L_AGND, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x10]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x11, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x11]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_FUNCTION_ENABLE, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x12]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x13, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x13]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x14, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x14]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x15, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x15]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x16, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x16]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_JACK_STATUS, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x17]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, FSA4480_JACK_FLAG, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x18]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x19, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x19]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x1A, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x1A]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x1B, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x1B]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x1C, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x1C]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x1D, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x1D]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x1F, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x1F]=0x%02x\n", __func__, value);
+	regmap_read(fsa_priv->regmap, 0x20, &value);
+	dev_info(fsa_priv->dev, "%s: reg[0x20]=0x%02x\n", __func__, value);
+}
+
 struct fsa4480_reg_val {
 	u16 reg;
 	u8 val;
@@ -53,7 +170,8 @@ struct fsa4480_reg_val {
 static const struct regmap_config fsa4480_regmap_config = {
 	.reg_bits = 8,
 	.val_bits = 8,
-	.max_register = FSA4480_RESET,
+	//.max_register = FSA4480_RESET,
+	.max_register = FSA4480_DELAY_L_L,
 };
 
 static const struct fsa4480_reg_val fsa_reg_i2c_defaults[] = {
@@ -125,7 +243,7 @@ static int fsa4480_usbc_event_changed_ucsi(struct fsa4480_priv *fsa_priv,
 	if (!dev)
 		return -EINVAL;
 
-	dev_dbg(dev, "%s: USB change event received, supply mode %d, usbc mode %ld, expected %d\n",
+	dev_info(dev, "%s: USB change event received, supply mode %d, usbc mode %ld, expected %d\n",
 			__func__, acc, fsa_priv->usbc_mode.counter,
 			TYPEC_ACCESSORY_AUDIO);
 
@@ -168,6 +286,51 @@ static int fsa4480_usbc_event_changed(struct notifier_block *nb_ptr,
 		return fsa4480_usbc_event_changed_ucsi(fsa_priv, evt, ptr);
 }
 
+static int dio4482_jack_detection(struct fsa4480_priv *fsa_priv)
+{
+	int i;
+	int value = 0;
+	int need_sleep_more = 0; //wait more time for wcd sleep 900ms
+	int j;
+
+	if (is_odm_wcd_sleep_state()) {
+		need_sleep_more = 1;
+	}
+	msleep(500);
+	g_dio4482_solution = 0;
+
+	for (i = 0; i < 15; i++) {
+		regmap_read(fsa_priv->regmap, FSA4480_JACK_FLAG, &value);
+		if ((value & 0x4) == 0x4) {
+			regmap_read(fsa_priv->regmap, FSA4480_JACK_STATUS, &value);
+			if ((value & 0x1) != 0x1) {
+				g_dio4482_solution = 1;
+				for (j = 0; j < 20; j++) {
+					if (!is_odm_wcd_sleep_state()) {
+						break;
+					} else {
+						need_sleep_more = 1;
+					}
+					msleep(50);
+					dev_info(fsa_priv->dev, "%s: sleep 50ms j = %d\n", __func__, j);
+				}
+				if (need_sleep_more) {
+					msleep(50);
+					dev_info(fsa_priv->dev, "%s: sleep 50ms j = %d\n", __func__, j);
+				} else {
+					msleep(5);
+				}
+				return 0;
+			}
+			dev_info(fsa_priv->dev, "%s: reg[0x17]=0x%02x !!!\n", __func__, value);
+			return -1;
+		}
+		dev_info(fsa_priv->dev, "%s: %02d reg[0x18]=0x%02x\n", __func__, i, value);
+		msleep(20);
+	}
+	return -1;
+}
+
 static int fsa4480_usbc_analog_setup_switches_psupply(
 						struct fsa4480_priv *fsa_priv)
 {
@@ -195,11 +358,37 @@ static int fsa4480_usbc_analog_setup_switches_psupply(
 		__func__, mode.intval != TYPEC_ACCESSORY_NONE, mode.intval);
 	atomic_set(&(fsa_priv->usbc_mode), mode.intval);
 
+	if (is_dio4482()) {
+		dev_info(fsa_priv->dev, "%s: dio4482 reset\n", __func__);
+		regmap_write(fsa_priv->regmap, FSA4480_RESET, 0x01);
+		msleep(1);
+	}
+
 	switch (mode.intval) {
 	/* add all modes FSA should notify for in here */
 	case TYPEC_ACCESSORY_AUDIO:
 		/* activate switches */
+
+		#if 0
 		fsa4480_usbc_update_settings(fsa_priv, 0x00, 0x9F);
+		#else
+		if (is_dio4482()) {
+			dev_info(fsa_priv->dev, "%s: headset plug in on dio4482\n", __func__);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_L, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_R, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_MIC, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_SENSE, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_GND, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_FUNCTION_ENABLE, 0x09);
+			if (dio4482_jack_detection(fsa_priv)) {
+				dev_info(fsa_priv->dev, "%s: headset plug in on qcom solution\n", __func__);
+				fsa4480_usbc_update_settings(fsa_priv, 0x00, 0x9F);
+			}
+		} else {
+			dev_info(fsa_priv->dev, "%s: headset plug in on qcom solution\n", __func__);
+			fsa4480_usbc_update_settings(fsa_priv, 0x00, 0x9F);
+		}
+		#endif
 
 		/* notify call chain on event */
 		blocking_notifier_call_chain(&fsa_priv->fsa4480_notifier,
@@ -212,6 +401,13 @@ static int fsa4480_usbc_analog_setup_switches_psupply(
 
 		/* deactivate switches */
 		fsa4480_usbc_update_settings(fsa_priv, 0x18, 0x98);
+
+		dev_info(fsa_priv->dev, "%s: headset plug out\n", __func__);
+		if (is_dio4482()) {
+			regmap_write(fsa_priv->regmap, FSA4480_FUNCTION_ENABLE, 0x00);
+			dev_info(fsa_priv->dev, "%s: headset plug out on dio4482, disable auto detection\n", __func__);
+		}
+		fsa_dump_reg(fsa_priv);
 		break;
 	default:
 		/* ignore other usb connection modes */
@@ -243,15 +439,43 @@ static int fsa4480_usbc_analog_setup_switches_ucsi(
 	dev_dbg(dev, "%s: setting GPIOs active = %d\n",
 		__func__, mode != TYPEC_ACCESSORY_NONE);
 
+	if (is_dio4482()) {
+		dev_info(fsa_priv->dev, "%s: dio4482 reset\n", __func__);
+		regmap_write(fsa_priv->regmap, FSA4480_RESET, 0x01);
+		msleep(1);
+	}
+
 	switch (mode) {
 	/* add all modes FSA should notify for in here */
 	case TYPEC_ACCESSORY_AUDIO:
 		/* activate switches */
+		#if 0
 		fsa4480_usbc_update_settings(fsa_priv, 0x00, 0x9F);
+		#else
+		if (is_dio4482()) {
+			dev_info(fsa_priv->dev, "%s: headset plug in on dio4482\n", __func__);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_L, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_R, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_MIC, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_SENSE, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_SLOW_GND, 0x4f);
+			regmap_write(fsa_priv->regmap, FSA4480_FUNCTION_ENABLE, 0x09);
+			if (dio4482_jack_detection(fsa_priv)) {
+				dev_info(fsa_priv->dev, "%s: headset plug in on qcom solution\n", __func__);
+				fsa4480_usbc_update_settings(fsa_priv, 0x00, 0x9F);
+			}
+		} else {
+			dev_info(fsa_priv->dev, "%s: headset plug in on qcom solution\n", __func__);
+			fsa4480_usbc_update_settings(fsa_priv, 0x00, 0x9F);
+		}
+		#endif
 
 		/* notify call chain on event */
 		blocking_notifier_call_chain(&fsa_priv->fsa4480_notifier,
 					     mode, NULL);
+
+		msleep(100);
+		fsa_dump_reg(fsa_priv);
 		break;
 	case TYPEC_ACCESSORY_NONE:
 		/* notify call chain on event */
@@ -260,6 +484,13 @@ static int fsa4480_usbc_analog_setup_switches_ucsi(
 
 		/* deactivate switches */
 		fsa4480_usbc_update_settings(fsa_priv, 0x18, 0x98);
+
+		dev_info(fsa_priv->dev, "%s: headset plug out\n", __func__);
+		if (is_dio4482()) {
+			regmap_write(fsa_priv->regmap, FSA4480_FUNCTION_ENABLE, 0x00);
+			dev_info(fsa_priv->dev, "%s: headset plug out on dio4482, disable auto detection\n", __func__);
+		}
+		fsa_dump_reg(fsa_priv);
 		break;
 	default:
 		/* ignore other usb connection modes */
@@ -416,6 +647,7 @@ int fsa4480_switch_event(struct device_node *node,
 
 	switch (event) {
 	case FSA_MIC_GND_SWAP:
+		#if 0
 		regmap_read(fsa_priv->regmap, FSA4480_SWITCH_CONTROL,
 				&switch_control);
 		if ((switch_control & 0x07) == 0x07)
@@ -423,6 +655,21 @@ int fsa4480_switch_event(struct device_node *node,
 		else
 			switch_control = 0x7;
 		fsa4480_usbc_update_settings(fsa_priv, switch_control, 0x9F);
+		#else
+		if (is_dio4482_solution()) {
+			dev_info(fsa_priv->dev, "%s: ignore mic-gnd swap event, because use dio4482 solution", __func__);
+		} else {
+			dev_info(fsa_priv->dev, "%s: processing mic-gnd swap event on qcom solution", __func__);
+			regmap_read(fsa_priv->regmap, FSA4480_SWITCH_CONTROL,
+					&switch_control);
+			if ((switch_control & 0x07) == 0x07)
+				switch_control = 0x0;
+			else
+				switch_control = 0x7;
+			fsa4480_usbc_update_settings(fsa_priv, switch_control, 0x9F);
+		}
+		fsa_dump_reg(fsa_priv);
+		#endif
 		break;
 	case FSA_USBC_ORIENTATION_CC1:
 		fsa4480_usbc_update_settings(fsa_priv, 0x18, 0xF8);
@@ -490,6 +737,9 @@ static int fsa4480_probe(struct i2c_client *i2c,
 		goto err_data;
 	}
 
+	regmap_read(fsa_priv->regmap, FSA4480_DEVICE_ID, &device_id);
+	dev_info(fsa_priv->dev, "%s: usb switch device_id(%d)", __func__, device_id);
+	
 	fsa4480_update_reg_defaults(fsa_priv->regmap);
 	devm_regmap_qti_debugfs_register(fsa_priv->dev, fsa_priv->regmap);
 
@@ -560,6 +810,11 @@ static void fsa4480_remove(struct i2c_client *i2c)
 
 	if (!fsa_priv)
 		return;
+
+	if (is_dio4482()) {
+		regmap_write(fsa_priv->regmap, FSA4480_FUNCTION_ENABLE, 0x00);
+		dev_info(fsa_priv->dev, "%s: disable dio4482 auto detection\n", __func__);
+	}
 
 	if (fsa_priv->use_powersupply) {
 		/* deregister from PMI */

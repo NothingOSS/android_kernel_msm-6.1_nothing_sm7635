@@ -239,4 +239,8 @@ source "drivers/peci/Kconfig"
 
 source "drivers/hte/Kconfig"
 
+source "drivers/nothing_stability/Kconfig"
+
+source "drivers/nothing_thermal/Kconfig"
+
 endmenu

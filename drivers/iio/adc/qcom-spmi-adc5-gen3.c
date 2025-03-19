@@ -1451,6 +1451,8 @@ static const struct adc5_channels adc5_chans_pmic[ADC5_MAX_CHANNEL] = {
 						SCALE_HW_CALIB_THERM_100K_PU_PM7)
 	[ADC5_GEN3_AMUX4_GPIO_100K_PU]	= ADC5_CHAN_TEMP("amux4_gpio_pu2", 0,
 						SCALE_HW_CALIB_THERM_100K_PU_PM7)
+	[ADC5_GEN3_AMUX1_THM_30K_PU]	= ADC5_CHAN_TEMP("amux_thm1_pu1", 0,
+						NOTHING_SCALE_HW_BATT_THERM_30K)
 };
 
 static int adc5_get_dt_channel_data(struct adc5_chip *adc,

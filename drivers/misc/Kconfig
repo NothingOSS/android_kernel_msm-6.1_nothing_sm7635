@@ -522,6 +522,44 @@ config BOOTMARKER_PROXY
 	  To compile this driver as a module, choose M here.
 	  If unsure, say N.
 
+config ST21NFC
+	tristate "ST Microelectronics ST21NFC/ST54 NFC Controller Driver"
+	depends on I2C
+	help
+	ST Microelectronics ST21NFC Near Field Communication controller support.
+
+config HWID
+	tristate "hwid check driver"
+	help
+	 this driver allows to check out hwid.
+	 If unsure, say N.
+
+config NFC_SE_STM
+	tristate "GPIO driver for ST54_SE"
+	help
+	  This enables the gpio driver for STM NFC-SE chip based devices.
+	  This is for SPI connected version.
+
+config NT_ANT_CABLE_DET
+	tristate "ant cable detect driver"
+	help
+	  NT ANT Cable Detect Driver.
+
+config NT_SIM_SLOT_DET
+	tristate "sim slot detect driver"
+	help
+	  NT SIM SLOT Detect Driver.
+
+config NT_OIS_VDD_CTRL
+	tristate "ois vdd control driver"
+	help
+	  NT OIS VDD Control Driver.
+
+config NT_SECURE_STATE
+	tristate "NT Secure State Driver"
+	help
+	  NT Secure State Driver.
+
 source "drivers/misc/c2port/Kconfig"
 source "drivers/misc/eeprom/Kconfig"
 source "drivers/misc/cb710/Kconfig"
@@ -540,4 +578,5 @@ source "drivers/misc/habanalabs/Kconfig"
 source "drivers/misc/uacce/Kconfig"
 source "drivers/misc/pvpanic/Kconfig"
 source "drivers/misc/mchp_pci1xxxx/Kconfig"
+source "drivers/misc/haptic/Kconfig"
 endmenu

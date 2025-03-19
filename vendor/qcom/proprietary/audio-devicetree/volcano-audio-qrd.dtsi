@@ -50,14 +50,16 @@
 		"IN1_HPHL", "HPHL_OUT",
 		"IN2_HPHR", "HPHR_OUT",
 		"IN3_AUX", "AUX_OUT",
+		#if 0
 		"WSA SRC0_INP", "SRC0",
 		"WSA_TX DEC0_INP", "TX DEC0 MUX",
 		"WSA_TX DEC1_INP", "TX DEC1 MUX",
+		#endif
 		"RX_TX DEC0_INP", "TX DEC0 MUX",
 		"RX_TX DEC1_INP", "TX DEC1 MUX",
 		"RX_TX DEC2_INP", "TX DEC2 MUX",
 		"RX_TX DEC3_INP", "TX DEC3 MUX",
-		"SpkrRight IN", "WSA_SPK2 OUT",
+		//"SpkrRight IN", "WSA_SPK2 OUT",
 		"TX SWR_INPUT", "ADC1_OUTPUT",
 		"TX SWR_INPUT", "ADC2_OUTPUT",
 		"TX SWR_INPUT", "ADC3_OUTPUT",
@@ -69,10 +71,12 @@
 		"VA_AIF2 CAP", "VA_SWR_CLK",
 		"VA_AIF3 CAP", "VA_SWR_CLK";
 	asoc-codec  = <&stub_codec>, <&lpass_cdc>,
-			      <&wcd9378_codec>, <&wsa883x_0222>;
+			      //<&wcd9378_codec>, <&wsa883x_0222>;
+			      <&wcd9378_codec>;
 	asoc-codec-names = "msm-stub-codec.1", "lpass-cdc",
 			   "wcd9378_codec", "wsa-codec2";
-	qcom,wsa-max-devs = <1>;
+	//qcom,wsa-max-devs = <1>;
+	qcom,wsa-max-devs = <0>;
 	qcom,msm-mbhc-usbc-audio-supported = <1>;
 	qcom,msm-mbhc-hphl-swh = <0>;
 	qcom,msm-mbhc-gnd-swh = <0>;
@@ -88,7 +92,8 @@
 	};
 
 	wsa883x_0222: wsa883x@02170222 {
-		status = "okay";
+		//status = "okay";
+		status = "disabled";
 	};
 };
 

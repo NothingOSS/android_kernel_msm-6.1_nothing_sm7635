@@ -25,6 +25,9 @@
 #include "wcd9378.h"
 #include "internal.h"
 #include "asoc/bolero-slave-internal.h"
+#include <linux/debugfs.h>
+#include <linux/uaccess.h>
+#include <linux/fs.h>
 
 #define NUM_SWRS_DT_PARAMS 5
 
@@ -1238,7 +1241,7 @@ static int wcd9378_tx_sequencer_enable(struct snd_soc_dapm_widget *w,
 		}
 
 		rate = wcd9378_get_clk_rate(wcd9378->tx_mode[w->shift - ADC1]);
-		if (w->shift == ADC2 && !((snd_soc_component_read(component,
+		if (w->shift == ADC2 && ((snd_soc_component_read(component,
 				WCD9378_TX_NEW_TX_CH12_MUX) &
 				WCD9378_TX_NEW_TX_CH12_MUX_CH2_SEL_MASK) == 0x10)) {
 			if (!wcd9378->bcs_dis) {
@@ -2857,7 +2860,7 @@ static int wcd9378_hph_get_gain(struct snd_kcontrol *kcontrol,
 	offset /= 0x180;
 	ucontrol->value.enumerated.item[0] = offset;
 
-	dev_dbg(component->dev, "%s： offset is 0x%0x\n", __func__, offset);
+	dev_dbg(component->dev, "%s: offset is 0x%0x\n", __func__, offset);
 	return 0;
 }
 
@@ -4015,6 +4018,67 @@ static int wcd9378_wcd_mode_check(struct snd_soc_component *component)
 	return 0;
 }
 
+#ifdef CONFIG_DEBUG_FS
+
+#define WCD_REG_MAX_BUF_LEN 20
+#define BYTES_PER_LINE 17
+
+static ssize_t wcd9378_swrslave_reg_show(struct device *pdev, char __user *ubuf,
+					 size_t count, loff_t *ppos)
+{
+	int i, reg_val, len;
+	ssize_t total = 0;
+	char tmp_buf[WCD_REG_MAX_BUF_LEN];
+	int reg_cnt = sizeof(dump_reg) / sizeof(u32);
+
+	if (!ubuf || !ppos)
+		return 0;
+
+	for (i = ((int)*ppos / BYTES_PER_LINE); i < reg_cnt; i++) {
+		reg_val = snd_soc_component_read(
+			(struct snd_soc_component *)pdev, dump_reg[i]);
+		len = scnprintf(tmp_buf, sizeof(tmp_buf), "0x%.8x: 0x%.2x\n",
+				dump_reg[i], (reg_val & 0xFF));
+		if (((total + len) >= count - 1) || (len < 0))
+			break;
+		if (copy_to_user((ubuf + total), tmp_buf, len)) {
+			pr_err("%s: fail to copy reg dump\n", __func__);
+			total = -EFAULT;
+			goto copy_err;
+		}
+		total += len;
+		*ppos += len;
+	}
+
+copy_err:
+
+	return total;
+}
+
+static ssize_t codec_debug_dump(struct file *file, char __user *ubuf,
+				size_t count, loff_t *ppos)
+{
+	struct device *pdev;
+
+	if (!count || !file || !ppos || !ubuf)
+		return -EINVAL;
+
+	pdev = file->private_data;
+	if (!pdev)
+		return -EINVAL;
+
+	if (*ppos < 0)
+		return -EINVAL;
+
+	return wcd9378_swrslave_reg_show(pdev, ubuf, count, ppos);
+}
+
+static const struct file_operations codec_debug_dump_ops = {
+	.open = simple_open,
+	.read = codec_debug_dump,
+};
+#endif
+
 static int wcd9378_soc_codec_probe(struct snd_soc_component *component)
 {
 	struct wcd9378_priv *wcd9378 = snd_soc_component_get_drvdata(component);
@@ -4085,6 +4149,23 @@ static int wcd9378_soc_codec_probe(struct snd_soc_component *component)
 			return ret;
 		}
 	}
+
+#ifdef CONFIG_DEBUG_FS
+	if (!wcd9378->debugfs_wcd9378_dent) {
+		wcd9378->debugfs_wcd9378_dent =
+			debugfs_create_dir("wcd9378-register-dump", 0);
+		if (!IS_ERR(wcd9378->debugfs_wcd9378_dent)) {
+			wcd9378->debugfs_reg_dump = debugfs_create_file(
+				"registers", S_IFREG | 0444,
+				wcd9378->debugfs_wcd9378_dent,
+				(void *)component, &codec_debug_dump_ops);
+
+			if (IS_ERR(wcd9378->debugfs_reg_dump)) {
+				pr_err("debugfs_create_file failed\n");
+			}
+		}
+	}
+#endif
 
 exit:
 	return ret;

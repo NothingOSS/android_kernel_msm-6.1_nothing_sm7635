@@ -559,7 +559,7 @@ static struct posix_acl *ntfs_get_acl_ex(struct inode *inode, int type,
 
 	/* Translate extended attribute to acl. */
 	if (err >= 0) {
-		acl = posix_acl_from_xattr(&init_user_ns, buf, err);
+		acl = nposix_acl_from_xattr(&init_user_ns, buf, err);
 	} else if (err == -ENODATA) {
 		acl = NULL;
 	} else {
@@ -567,7 +567,7 @@ static struct posix_acl *ntfs_get_acl_ex(struct inode *inode, int type,
 	}
 
 	if (!IS_ERR(acl))
-		set_cached_acl(inode, type, acl);
+		nset_cached_acl(inode, type, acl);
 
 	__putname(buf);
 
@@ -604,7 +604,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
 	case ACL_TYPE_ACCESS:
 		/* Do not change i_mode if we are in init_acl */
 		if (acl && !init_acl) {
-			err = posix_acl_update_mode(mnt_userns, inode, &mode,
+			err = nposix_acl_update_mode(mnt_userns, inode, &mode,
 						    &acl);
 			if (err)
 				return err;
@@ -634,7 +634,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
 		value = kmalloc(size, GFP_NOFS);
 		if (!value)
 			return -ENOMEM;
-		err = posix_acl_to_xattr(&init_user_ns, acl, value, size);
+		err = nposix_acl_to_xattr(&init_user_ns, acl, value, size);
 		if (err < 0)
 			goto out;
 		flags = 0;
@@ -644,7 +644,7 @@ static noinline int ntfs_set_acl_ex(struct user_namespace *mnt_userns,
 	if (err == -ENODATA && !size)
 		err = 0; /* Removing non existed xattr. */
 	if (!err) {
-		set_cached_acl(inode, type, acl);
+		nset_cached_acl(inode, type, acl);
 		if (inode->i_mode != mode) {
 			inode->i_mode = mode;
 			mark_inode_dirty(inode);
@@ -677,7 +677,7 @@ int ntfs_init_acl(struct user_namespace *mnt_userns, struct inode *inode,
 	struct posix_acl *default_acl, *acl;
 	int err;
 
-	err = posix_acl_create(dir, &inode->i_mode, &default_acl, &acl);
+	err = nposix_acl_create(dir, &inode->i_mode, &default_acl, &acl);
 	if (err)
 		return err;
 
@@ -1042,8 +1042,8 @@ static const struct xattr_handler ntfs_other_xattr_handler = {
 
 const struct xattr_handler *ntfs_xattr_handlers[] = {
 #ifdef CONFIG_NTFS3_FS_POSIX_ACL
-	&posix_acl_access_xattr_handler,
-	&posix_acl_default_xattr_handler,
+	&nposix_acl_access_xattr_handler,
+	&nposix_acl_default_xattr_handler,
 #endif
 	&ntfs_other_xattr_handler,
 	NULL,

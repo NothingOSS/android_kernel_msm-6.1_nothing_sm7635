@@ -403,6 +403,78 @@ static void update_halt_cpus(struct cpumask *cpus, enum pause_type type)
 	}
 }
 
+static void print_all_halt_status(void)
+{
+	int cpu, client;
+	cpumask_t max_cpus, full_halt_cpus, partial_halt_cpus;
+	struct halt_cpu_state *halt_cpu_state;
+
+	/* init cpumask */
+	cpumask_setall(&max_cpus);
+
+	pr_warn("NT warning: print all halt client status");
+	for (client = PAUSE_CORE_CTL; client < PAUSE_CLIENT_MAX; client = client << 1) {
+		cpumask_clear(&full_halt_cpus);
+		cpumask_clear(&partial_halt_cpus);
+
+		for_each_cpu(cpu, &max_cpus) {
+			halt_cpu_state = per_cpu_ptr(&halt_state, cpu);
+
+			if (halt_cpu_state->client_vote_mask[HALT] & client) {
+				cpumask_set_cpu(cpu, &full_halt_cpus);
+			}
+
+			if (halt_cpu_state->client_vote_mask[PARTIAL_HALT] & client) {
+				cpumask_set_cpu(cpu, &partial_halt_cpus);
+			}
+		}
+
+		pr_warn("NT warning:   client: %d", client);
+		pr_warn("NT warning:     HALT: %*pbl", cpumask_pr_args(&full_halt_cpus));
+		pr_warn("NT warning:     PARTIAL_HALT: %*pbl", cpumask_pr_args(&partial_halt_cpus));
+	}
+
+}
+
+bool pause_all_big_core_warning = false;
+static void check_halt_cpus_status(bool is_halt, enum pause_client client)
+{
+	int cpu, type;
+	cpumask_t halted_cpus, max_cpus;
+	struct halt_cpu_state *halt_cpu_state;
+
+	/* init cpumask */
+	cpumask_setall(&max_cpus);
+	cpumask_clear(&halted_cpus);
+
+	for_each_cpu(cpu, &max_cpus) {
+		halt_cpu_state = per_cpu_ptr(&halt_state, cpu);
+
+		for (type = 0; type < MAX_PAUSE_TYPE; type++) {
+			if (halt_cpu_state->client_vote_mask[type])
+				cpumask_set_cpu(cpu, &halted_cpus);
+		}
+	}
+
+	/* warning if pause all big core */
+	for(cpu = 0; cpu < (WALT_NR_CPUS - nr_big_cpus); cpu++) {
+		cpumask_clear_cpu(cpu, &halted_cpus);
+	}
+	if (cpumask_weight(&halted_cpus) >= nr_big_cpus) {
+		if (!pause_all_big_core_warning && is_halt) {
+			pause_all_big_core_warning = true;
+			pr_warn("NT warning: all big core are paused, halt client=%d", client);
+			print_all_halt_status();
+		}
+	} else {
+		if (pause_all_big_core_warning && !is_halt) {
+			pause_all_big_core_warning = false;
+			pr_warn("NT warning: not all big core paused, resume client=%d", client);
+			print_all_halt_status();
+		}
+	}
+}
+
 /* cpus will be modified */
 static int walt_halt_cpus(struct cpumask *cpus, enum pause_client client, enum pause_type type)
 {
@@ -429,6 +501,9 @@ static int walt_halt_cpus(struct cpumask *cpus, enum pause_client client, enum p
 			 cpumask_pr_args(&requested_cpus));
 	else
 		update_clients(&requested_cpus, true, client, type);
+
+	check_halt_cpus_status(true, client);
+
 unlock:
 	raw_spin_unlock_irqrestore(&halt_lock, flags);
 
@@ -473,6 +548,8 @@ static int walt_start_cpus(struct cpumask *cpus, enum pause_client client, enum 
 		/* restore/increment ref counts in case of error */
 		update_clients(&requested_cpus, true, client, type);
 	}
+
+	check_halt_cpus_status(false, client);
 
 	raw_spin_unlock_irqrestore(&halt_lock, flags);
 

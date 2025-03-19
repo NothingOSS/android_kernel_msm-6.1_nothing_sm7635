@@ -212,7 +212,7 @@ static void convert_adc_to_vbat_thresh_val(struct bcl_device *bcl_perph, int *va
 /* Common helper to convert nano unit to milli unit */
 static void convert_adc_nu_to_mu_val(unsigned int *val, unsigned int scaling_factor)
 {
-	*val = div_s64(*val * scaling_factor, 1000000);
+	*val = div_s64((s64)*val * scaling_factor, 1000000);
 }
 
 static void convert_adc_to_vbat_val(int *val)
@@ -388,6 +388,14 @@ static int bcl_read_ibat(struct thermal_zone_device *tz, int *adc_value)
 			convert_adc_to_ibat_val(bat_data->dev, adc_value,
 				BCL_IBAT_SCALING_UA *
 					bat_data->dev->ibat_ext_range_factor);
+
+		if (val & 0x8000) //if 2's complement negative
+		{
+			*adc_value = -((~(val) & 0xFFFF) + 1);
+		} else {
+			*adc_value = (((val) & 0xFFFF) + 1);
+		}
+
 		bat_data->last_val = *adc_value;
 	}
 	pr_debug("ibat:%d mA ADC:0x%02x\n", bat_data->last_val, val);

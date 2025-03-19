@@ -15,6 +15,9 @@
 #include "dsi-panel-vtdr6130-dsc-fhd-plus-60hz-video.dtsi"
 #include "dsi-panel-vtdr6130-qsync-dsc-fhd-plus-144hz-cmd.dtsi"
 #include "dsi-panel-vtdr6130-qsync-dsc-fhd-plus-144hz-video.dtsi"
+#include "dsi-panel-rm692h5-dsc-fhd-plus-120hz-cmd-vxn.dtsi"
+#include "dsi-panel-rm69220-dsc-fhd-plus-120hz-vid-vxn.dtsi"
+#include "dsi-panel-rm69220-dsc-fhd-plus-120hz-vid-boe.dtsi"
 
 #include "volcano-sde-display-pinctrl.dtsi"
 
@@ -31,6 +34,52 @@
 			qcom,supply-enable-load = <220000>;
 			qcom,supply-disable-load = <8000>;
 			qcom,supply-post-on-sleep = <20>;
+		};
+	};
+
+	vddic_1v8_t0: vddic_1v8_t0 {
+		compatible = "regulator-fixed";
+		regulator-name = "vddic_1v8_t0";
+		startup-delay-us = <0>;
+		enable-active-high;
+		regulator-boot-on;
+		gpio = <&tlmm 109 0>;
+	};
+
+	dsi_panel_pwr_supply_amoled_vxn: dsi_panel_pwr_supply_amoled_vxn {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		qcom,panel-supply-entry@0 {
+			reg = <0>;
+			qcom,supply-name = "vddio";
+			qcom,supply-min-voltage = <1800000>;
+			qcom,supply-max-voltage = <1800000>;
+			qcom,supply-enable-load = <220000>;
+			qcom,supply-disable-load = <8000>;
+		};
+
+		qcom,panel-supply-entry@1 {
+			reg = <1>;
+			qcom,supply-name = "vddic_1v8_t0";
+			qcom,supply-min-voltage = <1800000>;
+			qcom,supply-max-voltage = <1800000>;
+			qcom,supply-enable-load = <200000>;
+			qcom,supply-disable-load = <0>;
+			qcom,supply-post-on-sleep = <2>;
+		};
+
+		qcom,panel-supply-entry@2 {
+			reg = <2>;
+			qcom,supply-name = "vci";
+			qcom,supply-min-voltage = <3000000>;
+			qcom,supply-max-voltage = <3000000>;
+			qcom,supply-enable-load = <10000>;
+			qcom,supply-disable-load = <300>;
+			qcom,supply-post-on-sleep = <0>;
+			qcom,supply-pre-on-sleep = <1>;
+			qcom,supply-pre-off-sleep = <2>;
+			qcom,supply-post-off-sleep = <2>;
 		};
 	};
 
@@ -160,6 +209,92 @@
 		qcom,demura-panel-id = <0x0122e700 0x00000471>;
 	};
 
+};
+
+&dsi_rm69220_amoled_120hz_vid_boe {
+	qcom,dsi-select-clocks = "pll_byte_clk0", "pll_dsi_clk0";
+
+	qcom,dsi-supported-dfps-list = <120 90 60 30>;
+	qcom,mdss-dsi-pan-enable-dynamic-fps;
+	qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_both_hv_porch";
+	qcom,dsi-dfps-hfp-list = <36 36 36 1124>;
+	qcom,dsi-dfps-hbp-list = <36 36 36 36>;
+	qcom,dsi-dfps-hpw-list = <4 4 4 4>;
+	qcom,dsi-dfps-vbp-list = <52 52 52 52>;
+	qcom,dsi-dfps-vfp-list = <72 888 2556 72>;
+	qcom,dsi-dfps-vpw-list = <4 4 4 4>;
+
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9c>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+
+	qcom,mdss-dsi-panel-hdr-enabled;
+
+	qcom,mdss-dsi-display-timings {
+		timing@0 {
+			qcom,mdss-dsi-panel-phy-timings = [00 1C 07 07 17 16 07
+				07 08 02 04 00 18 0C];
+			qcom,display-topology = <1 1 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_rm69220_amoled_120hz_vid_vxn {
+	qcom,dsi-select-clocks = "pll_byte_clk0", "pll_dsi_clk0";
+
+	qcom,dsi-supported-dfps-list = <120 90 60 30>;
+	qcom,mdss-dsi-pan-enable-dynamic-fps;
+	qcom,mdss-dsi-pan-fps-update = "dfps_immediate_porch_mode_both_hv_porch";
+	qcom,dsi-dfps-hfp-list = <48 48 48 1140>;
+	qcom,dsi-dfps-hbp-list = <24 24 24 24>;
+	qcom,dsi-dfps-hpw-list = <4 4 4 4>;
+	qcom,dsi-dfps-vbp-list = <16 16 16 16>;
+	qcom,dsi-dfps-vfp-list = <108 948 2628 108>;
+	qcom,dsi-dfps-vpw-list = <4 4 4 4>;
+
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9c>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+
+	qcom,mdss-dsi-panel-hdr-enabled;
+
+	qcom,mdss-dsi-display-timings {
+		timing@0 {
+			qcom,mdss-dsi-panel-phy-timings = [00 1C 07 07 17 16 07
+				07 08 02 04 00 18 0C];
+			qcom,display-topology = <1 1 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
+};
+
+&dsi_rm692h5_amoled_120hz_cmd_vxn {
+	qcom,dsi-select-clocks = "pll_byte_clk0", "pll_dsi_clk0";
+
+	qcom,esd-check-enabled;
+	qcom,mdss-dsi-panel-status-check-mode = "reg_read";
+	qcom,mdss-dsi-panel-status-command = [06 01 00 01 00 00 01 0a];
+	qcom,mdss-dsi-panel-status-command-state = "dsi_lp_mode";
+	qcom,mdss-dsi-panel-status-value = <0x9c>;
+	qcom,mdss-dsi-panel-status-read-length = <1>;
+
+	qcom,mdss-dsi-panel-hdr-enabled;
+
+	qcom,mdss-dsi-display-timings {
+		timing@0 {
+			qcom,mdss-dsi-panel-phy-timings = [00 25 0A 0A 1B 18 0A
+				0A 0A 02 04 00 1F 0F];
+			qcom,display-topology = <1 1 1>;
+			qcom,default-topology-index = <0>;
+		};
+	};
 };
 
 /* PHY TIMINGS REVISION YL with reduced margins */

@@ -854,6 +854,7 @@
 				pins = "gpio36", "gpio37";
 				drive-strength = <2>;
 				bias-disable;
+				output-high;
 			};
 		};
 	};
@@ -1380,7 +1381,7 @@
 				pins = "gpio59";
 				drive-strength = <2>;
 				bias-pull-up;
-				qcom,i2c_pull;
+				//qcom,i2c_pull;
 			};
 		};
 
@@ -1394,7 +1395,7 @@
 				pins = "gpio60";
 				drive-strength = <2>;
 				bias-pull-up;
-				qcom,i2c_pull;
+				//qcom,i2c_pull;
 			};
 		};
 
@@ -1408,6 +1409,7 @@
 				pins = "gpio59", "gpio60";
 				drive-strength = <2>;
 				bias-disable;
+				output-high;
 			};
 		};
 	};

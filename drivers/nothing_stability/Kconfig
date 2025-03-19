@@ -1,0 +1,58 @@
+config NOTHING_BOOTLOADER_LOG
+	tristate "Nothing bootloader log driver"
+	default n
+	help
+		show booloader_log under proc/bootloader_log
+
+config NOTHING_WRITRBACK_KMSG
+	tristate "Nothing kernel writeback driver"
+	default n
+	help
+		The driver logs power-on to system_stage kmsg log.
+		So it doesn't log any customer info.
+		When the device is stuck. It can help us debug.
+		Check the /sys/devices/virtual/NT/NT_reserve_kernel_log/boot_stage_systemserver is exist.
+
+config NOTHING_CHECK_PARTS
+	tristate "Nothing check partitions status"
+	default n
+	help
+		enable: echo fec_decode_rsb 1 > proc/nt_check_partitions/enable
+		disable: echo fec_decode_rsb 0 > proc/nt_check_partitions/enable
+		status: cat proc/nt_check_partitions/result
+
+config NOTHING_TASK_MEMINFO
+	tristate "Nothing show all task memory info driver"
+	default n
+	help
+		cat /proc/nt_meminfo/show_all_tasks will show all task meminfo
+
+config NOTHING_DISK_USAGE
+	tristate "Nothing show all file size module"
+	default n
+	help
+		Detect malicious files and prevent them from encroaching on disk space
+
+config NOTHING_TASK_INFO
+	tristate "Nothing show all task info driver"
+	default n
+	help
+		cat /proc/nt_taskinfo/show_all_tasks_id will show all task pid
+
+config NOTHING_RESTART_HANDLER
+	tristate "Nothing power-off function enhance"
+	default n
+	help
+		store restart info into imem.
+
+config NOTHING_ERROR_REPORT
+	tristate "Nothing error report"
+	default n
+	help
+		Add reporting to userspace for related errors in hardware components.
+
+config NOTHING_SECURE_ELEMENT
+	tristate "Nothing secure state"
+	default n
+	help
+		This driver getting secure info from hw which setting up in early stage.

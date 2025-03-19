@@ -1217,5 +1217,17 @@ struct SID {
 };
 static_assert(offsetof(struct SID, SubAuthority) == 8);
 
+
+struct posix_acl *nposix_acl_from_xattr(struct user_namespace *user_ns,
+				       const void *value, size_t size);
+void nset_cached_acl(struct inode *inode, int type, struct posix_acl *acl);
+int nposix_acl_update_mode(struct user_namespace *, struct inode *, umode_t *,
+			  struct posix_acl **);
+int nposix_acl_to_xattr(struct user_namespace *user_ns,
+		       const struct posix_acl *acl, void *buffer, size_t size);
+extern int nposix_acl_create(struct inode *, umode_t *, struct posix_acl **,
+		struct posix_acl **);
+extern const struct xattr_handler nposix_acl_access_xattr_handler;
+extern const struct xattr_handler nposix_acl_default_xattr_handler;
 #endif /* _LINUX_NTFS3_NTFS_H */
 // clang-format on

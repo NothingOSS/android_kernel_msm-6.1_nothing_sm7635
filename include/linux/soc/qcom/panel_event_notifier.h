@@ -24,6 +24,7 @@ enum panel_event_notifier_client {
 	PANEL_EVENT_NOTIFIER_CLIENT_SECONDARY_TOUCH,
 	PANEL_EVENT_NOTIFIER_CLIENT_ECM,
 	PANEL_EVENT_NOTIFIER_CLIENT_BATTERY_CHARGER,
+	PANEL_EVENT_NOTIFIER_CLIENT_FINGERPRINT,
 	PANEL_EVENT_NOTIFIER_CLIENT_MAX
 };
 
@@ -40,6 +41,7 @@ struct panel_event_notification_data {
 	u32 old_fps;
 	u32 new_fps;
 	bool early_trigger;
+	bool esd_recoverying;
 };
 
 struct panel_event_notification {

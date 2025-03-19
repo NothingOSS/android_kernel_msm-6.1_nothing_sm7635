@@ -629,6 +629,7 @@ struct sde_connector {
 	u32 unset_bl_level;
 	bool allow_bl_update;
 	bool dimming_bl_notify_enabled;
+	struct work_struct set_brightness_work;
 
 	u32 hdr_eotf;
 	bool hdr_metadata_type_one;

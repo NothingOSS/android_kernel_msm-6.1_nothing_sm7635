@@ -998,6 +998,7 @@ static void _sde_kms_drm_check_dpms(struct drm_atomic_state *old_state,
 	struct sde_connector *c_conn;
 	int i, old_mode, new_mode, old_fps, new_fps;
 	enum panel_event_notifier_tag panel_type;
+	struct dsi_display * display;
 
 	for_each_old_connector_in_state(old_state, connector,
 			old_conn_state, i) {
@@ -1039,6 +1040,15 @@ static void _sde_kms_drm_check_dpms(struct drm_atomic_state *old_state,
 
 			if (!c_conn->panel)
 				continue;
+
+			display = (struct dsi_display *) c_conn->display;
+			if (!display || !display->panel) {
+				SDE_ERROR("Invalid params(s) dsi_display %pK, panel %pK\n",
+							display, ((display) ? display->panel : NULL));
+				notification.notif_data.esd_recoverying = false;
+			} else {
+				notification.notif_data.esd_recoverying = display->panel->doze_recoverying;
+			}
 
 			panel_type = sde_encoder_is_primary_display(
 				connector->encoder) ?

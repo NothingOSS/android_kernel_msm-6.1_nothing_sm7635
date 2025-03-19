@@ -70,7 +70,7 @@
 /*****************************************************************************
 * Private constant and macro definitions using #define
 *****************************************************************************/
-#define FTS_DRIVER_NAME                     "fts_ts"
+#define FTS_DRIVER_NAME                     "fts"
 #define INTERVAL_READ_REG                   200  /* unit:ms */
 #define TIMEOUT_READ_REG                    1000 /* unit:ms */
 #if FTS_POWER_SOURCE_CUST_EN
@@ -3248,7 +3248,7 @@ static const struct i2c_device_id fts_ts_i2c_id[] = {
 	{},
 };
 static const struct of_device_id fts_dt_match[] = {
-	{.compatible = "focaltech,fts_ts", },
+	{.compatible = "focaltech,fts", },
 	{},
 };
 MODULE_DEVICE_TABLE(of, fts_dt_match);

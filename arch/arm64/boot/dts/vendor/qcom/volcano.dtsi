@@ -25,18 +25,20 @@
 	memory { device_type = "memory"; reg = <0 0 0 0>; };
 
 	chosen: chosen {
-		bootargs = "loglevel=6 kpti=0 log_buf_len=256K swiotlb=noforce loop.max_part=7 pcie_ports=compat irqaffinity=0-3 cpufreq.default_governor=performance kasan=off cgroup.memory=nokmem,nosocket disable_dma32=on kernel.panic_on_rcu_stall=1 fw_devlink.strict=1 service_locator.enable=1 rcupdate.rcu_expedited=1 rcu_nocbs=0-7 no-steal-acc printk.console_no_auto_verbose=1 can.stats_timer=0 ftrace_dump_on_oops firmware_class.path=/vendor/firmware_mnt/image,/vendor/vm-system/oemvm/boot,/vendor/vm-system/trustedvm/boot,/vendor/firmware";
+		bootargs = "loglevel=6 kpti=0 swiotlb=noforce loop.max_part=7 pcie_ports=compat irqaffinity=0-3 cpufreq.default_governor=performance kasan=off cgroup.memory=nokmem,nosocket disable_dma32=on kernel.panic_on_rcu_stall=1 fw_devlink.strict=1 service_locator.enable=1 rcupdate.rcu_expedited=1 rcu_nocbs=0-7 no-steal-acc printk.console_no_auto_verbose=1 can.stats_timer=0 ftrace_dump_on_oops firmware_class.path=/vendor/firmware_mnt/image,/vendor/vm-system/oemvm/boot,/vendor/vm-system/trustedvm/boot,/vendor/firmware";
 		stdout-path = "/soc/qcom,qupv3_0_geni_se@ac0000/qcom,qup_uart@a94000:115200n8";
 	};
 
 	reserved_memory: reserved-memory {};
 
+	/*
 	mem-offline {
 		compatible = "qcom,mem-offline";
 		offline-sizes = <0x2 0xc0000000 0x1 0x0>;
 		granule = <512>;
 		mboxes = <&qmp_aop 0>;
 	};
+	*/
 
 	aliases: aliases {
 		serial0 = &qupv3_se5_2uart;
@@ -644,7 +646,10 @@
 		interrupt-controller;
 		#interrupt-cells = <2>;
 		wakeup-parent = <&pdc>;
+		/*
 		qcom,gpios-reserved = <13 27 28 29 30 63 64>;
+		*/
+		qcom,gpios-reserved = <13 63 64>;
 	};
 
 	show_resume_irqs@17100000 {
@@ -2018,6 +2023,9 @@
 		/* skip pbl wa as we have got this fixed in pbl */
 		qcom,bypass-pbl-rst-wa;
 
+		limit-tx-hs-gear = <3>;
+		limit-rx-hs-gear = <3>;
+
 		status = "disabled";
 
 		qos0 {
@@ -2151,6 +2159,12 @@
 			reg = <0xc8 0xc8>;
 		};
 
+		restart_info@bf0 {
+			compatible = "nothing,msm-imem-restart_info";
+			reg = <0xbf0 0x64>;
+			info_size = <0x64>;
+		};
+
 		modem_dsm@c98 {
 			compatible = "qcom,msm-imem-mss-dsm";
 			reg = <0xc98 0x10>;
@@ -2198,13 +2212,6 @@
 		status = "ok";
 	};
 
-	ramoops_mem: ramoops_region {
-		compatible = "ramoops";
-		alloc-ranges = <0x0 0x00000000 0xffffffff 0xffffffff>;
-		size = <0x0 0x200000>;
-		pmsg-size = <0x200000>;
-		mem-type = <2>;
-	};
 
 	adsp_pas: remoteproc-adsp@03000000 {
 		compatible = "qcom,volcano-adsp-pas";
@@ -2900,6 +2907,20 @@
 		reg = <0x0 0xf7c00000 0x0 0x4c00000>;
 		reusable;
 		alignment = <0x0 0x400000>;
+	};
+
+	ramoops_mem: ramoops_region {
+		compatible = "ramoops";
+		alloc-ranges = <0x0 0x00000000 0xffffffff 0xffffffff>;
+		size = <0x0 0x200000>;
+		pmsg-size = <0x200000>;
+		mem-type = <2>;
+	};
+};
+
+&reserved_memory {
+	ramoops_mem {
+		/delete-property/ alloc-ranges;
 	};
 };
 

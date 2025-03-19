@@ -24,6 +24,9 @@ int fsa4480_reg_notifier(struct notifier_block *nb,
 			 struct device_node *node);
 int fsa4480_unreg_notifier(struct notifier_block *nb,
 			   struct device_node *node);
+bool is_dio4482(void);
+int odm_wcd_sleep_before(void);
+int odm_wcd_sleep_after(void);
 #else
 static inline int fsa4480_switch_event(struct device_node *node,
 				       enum fsa_function event)
@@ -42,6 +45,22 @@ static inline int fsa4480_unreg_notifier(struct notifier_block *nb,
 {
 	return 0;
 }
+
+static inline bool is_dio4482(void)
+{
+	reture false;
+}
+
+static inline int odm_wcd_sleep_before(void)
+{
+	reture 0;
+}
+
+static inline int odm_wcd_sleep_after(void)
+{
+	reture 0;
+}
+
 #endif /* CONFIG_QCOM_FSA4480_I2C */
 
 #endif /* FSA4480_I2C_H */

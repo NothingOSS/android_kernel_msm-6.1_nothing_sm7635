@@ -1,3 +1,4 @@
+
 // SPDX-License-Identifier: GPL-2.0
 /*
  *
@@ -813,8 +814,11 @@ int ntfs3_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
 			ni->std_fa |= FILE_ATTRIBUTE_READONLY;
 	}
 
-	if (ia_valid & (ATTR_UID | ATTR_GID | ATTR_MODE))
-		ntfs_save_wsl_perm(inode);
+	/*if (ia_valid & (ATTR_UID | ATTR_GID | ATTR_MODE))
+		ntfs_save_wsl_perm(inode);*/
+	inode->i_mode |= (0777 & sbi->options->fs_fmask_inv);
+	inode->i_uid = sbi->options->fs_uid;
+	inode->i_gid = sbi->options->fs_gid;
 	mark_inode_dirty(inode);
 out:
 	return err;

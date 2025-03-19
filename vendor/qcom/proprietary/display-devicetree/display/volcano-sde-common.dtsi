@@ -340,11 +340,11 @@
 		reg-names = "dsi_phy", "pll_base", "dyn_refresh_base";
 		pll-label = "dsi_pll_4nm";
 
-		qcom,platform-strength-ctrl = [55 03
-						55 03
-						55 03
-						55 03
-						55 00];
+		qcom,platform-strength-ctrl = [11 03
+						11 03
+						11 03
+						11 03
+						11 00];
 		qcom,platform-lane-config = [00 00 0a 0a
 						00 00 0a 0a
 						00 00 0a 0a

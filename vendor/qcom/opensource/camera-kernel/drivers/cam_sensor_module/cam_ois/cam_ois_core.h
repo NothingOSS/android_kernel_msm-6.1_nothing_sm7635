@@ -36,5 +36,12 @@ void cam_ois_shutdown(struct cam_ois_ctrl_t *o_ctrl);
 
 struct completion *cam_ois_get_i3c_completion(uint32_t index);
 
+// xft add for new_feature tele ois read more than one reg
+// add func cam_ois_i2c_read_data @{
+int32_t cam_ois_i2c_read_data(
+	struct i2c_settings_array *i2c_settings,
+	struct camera_io_master *io_master_info);
+// @}
+
 #endif
 /* _CAM_OIS_CORE_H_ */

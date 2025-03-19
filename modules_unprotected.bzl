@@ -5,6 +5,11 @@ _unprotected_modules_map = {
         "drivers/block/zram/zram.ko",
         "mm/zsmalloc.ko",
     ],
+    "pineapple": [
+        # keep sorted
+        "drivers/block/zram/zram.ko",
+        "mm/zsmalloc.ko",
+    ],
 }
 
 def get_unprotected_vendor_modules_list(msm_target = None):

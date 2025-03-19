@@ -156,6 +156,16 @@ struct cam_sensor_ctrl_t {
 	bool                           hw_no_ops;
 };
 
+struct cam_nt_i2c_info {
+	uint16_t   slave_addr;
+	uint16_t   is_write;
+	uint32_t   reg_addr;
+	uint32_t   reg_data;
+	uint32_t   reg_addr_type;
+	uint32_t   reg_data_type;
+	uint16_t   status;
+};
+
 /**
  * @brief : API to register SENSOR hw to platform framework.
  * @return struct platform_device pointer on on success, or ERR_PTR() on error.

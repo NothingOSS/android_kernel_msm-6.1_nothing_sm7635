@@ -7,7 +7,7 @@
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 #include <dt-bindings/regulator/qcom,rpmh-regulator-levels.h>
 
-#include "volcano-camera-sensor-idp.dtsi"
+#include "arcanine-camera-sensor.dtsi"
 / {
 	model = "Qualcomm Technologies, Inc. Volcano QRD";
 	compatible = "qcom,volcano-qrd", "qcom,volcano", "qcom,volcanop-qrd", "qcom,volcanop", "qcom,qrd";
@@ -17,4 +17,6 @@
 			<0xc000291 0x10000>, <0xc000292 0x10000>,
 			<0x10000291 0x10000>, <0x10000292 0x10000>;
 	qcom,board-id = <11 0>, <11 1>;
+
+	qcom,oem-id = <1>;
 };

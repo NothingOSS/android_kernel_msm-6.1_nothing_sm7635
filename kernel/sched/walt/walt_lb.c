@@ -667,6 +667,77 @@ static int walt_lb_find_busiest_cpu(int dst_cpu, const cpumask_t *src_mask, int 
 	return busiest_cpu;
 }
 
+static inline int has_pushable_tasks(struct rq *rq)
+{
+	return !plist_head_empty(&rq->rt.pushable_tasks);
+}
+
+/*
+ * If a RT task is pending for more than WALT_RT_PUSH_THRESHOLD_NS on a cpu,
+ * then find another cpu, in the same cluster, for this task.
+ */
+void rt_task_fixup(struct rq *rq)
+{
+	struct task_struct *rt_task = NULL;
+	struct walt_task_struct *wts_rt_task = NULL;
+	int dst_cpu = -1, prev_cpu = cpu_of(rq);
+	u64 wc;
+	struct rq *dst_cpu_rq = NULL;
+	cpumask_t eligible_cpus;
+
+	raw_spin_rq_lock(rq);
+	if (has_pushable_tasks(rq) && (preempt_count() > 0)) {
+
+		wc = walt_sched_clock();
+
+		/* get highest pushable rt task on current cpu */
+		rt_task = pick_highest_pushable_task(rq, prev_cpu);
+		if (rt_task) {
+			wts_rt_task = (struct walt_task_struct *)rt_task->android_vendor_data1;
+			if (wts_rt_task &&
+				((wc - wts_rt_task->last_wake_ts) > WALT_RT_PUSH_THRESHOLD_NS)) {
+
+				/* All cpus except the current one are eligible for placement */
+				cpumask_setall(&eligible_cpus);
+				cpumask_clear_cpu(prev_cpu, &eligible_cpus);
+				walt_rt_energy_aware_wake_cpu(rt_task, &eligible_cpus, 1, &dst_cpu);
+				if (dst_cpu != -1 && dst_cpu != prev_cpu) {
+					dst_cpu_rq = cpu_rq(dst_cpu);
+					if (available_idle_cpu(dst_cpu))
+						walt_kick_cpu(dst_cpu);
+				} else {
+					goto unlock;
+				}
+
+				rt_task = pick_highest_pushable_task(rq, cpu_of(rq));
+				if (!rt_task)
+					goto unlock;
+
+				if (cpumask_test_cpu(dst_cpu, rt_task->cpus_ptr)) {
+					walt_detach_task(rt_task, rq, dst_cpu_rq);
+					double_lock_balance(rq, dst_cpu_rq);
+					walt_attach_task(rt_task, dst_cpu_rq);
+					double_unlock_balance(rq, dst_cpu_rq);
+					printk_deferred("[%s][%d]: RT task was runnable for more "
+							"than %d ns on CPU %d, moved it to CPU %d "
+							"(%s-%d)\n", __func__, __LINE__,
+							WALT_RT_PUSH_THRESHOLD_NS, prev_cpu,
+							dst_cpu, rt_task->comm, rt_task->pid);
+					trace_printk("[%s][%d]: RT task was runnable for more "
+							"than %d ns on CPU %d, moved it to CPU %d "
+							"(%s-%d)\n", __func__, __LINE__,
+							WALT_RT_PUSH_THRESHOLD_NS, prev_cpu,
+							dst_cpu, rt_task->comm, rt_task->pid);
+				}
+				goto unlock;
+			}
+		}
+	}
+
+unlock:
+	raw_spin_rq_unlock(rq);
+}
+
 static DEFINE_RAW_SPINLOCK(walt_lb_migration_lock);
 void walt_lb_tick(struct rq *rq)
 {
@@ -684,6 +755,7 @@ void walt_lb_tick(struct rq *rq)
 	if (!walt_fair_task(p))
 		return;
 
+	rt_task_fixup(rq);
 	walt_cfs_tick(rq);
 
 	if (!rq->misfit_task_load)
@@ -740,11 +812,6 @@ void walt_lb_tick(struct rq *rq)
 
 out_unlock:
 	raw_spin_unlock_irqrestore(&walt_lb_migration_lock, flags);
-}
-
-static inline int has_pushable_tasks(struct rq *rq)
-{
-	return !plist_head_empty(&rq->rt.pushable_tasks);
 }
 
 #define WALT_RT_PULL_THRESHOLD_NS	250000

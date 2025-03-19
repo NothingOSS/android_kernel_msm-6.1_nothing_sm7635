@@ -30,6 +30,8 @@
 			qcom,data-sink = "sram";
 			qcom,ap-qad-override;
 			qcom,link-list = <DCC_READ 0x17421000 2 0>,
+				<DCC_READ 0x174070 1 0>,
+				<DCC_READ 0x196100 1 0>,
 				<DCC_READ 0x1780005c 1 0>,
 				<DCC_READ 0x1781005c 1 0>,
 				<DCC_READ 0x1782005c 1 0>,

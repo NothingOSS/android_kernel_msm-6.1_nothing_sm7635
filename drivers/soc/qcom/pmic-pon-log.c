@@ -11,6 +11,9 @@
 #include <linux/of_device.h>
 #include <linux/platform_device.h>
 #include <linux/string.h>
+#include <linux/proc_fs.h>
+#include <linux/seq_file.h>
+#include <linux/uaccess.h>
 
 /* SDAM NVMEM register offsets: */
 #define REG_SDAM_COUNT		0x45
@@ -41,6 +44,8 @@ struct pmic_pon_log_dev {
 	struct nvmem_device		**nvmem;
 	int				nvmem_count;
 	int				sdam_fifo_count;
+	int				pon_fault_detected;
+	int				pon_panic_enable;
 };
 
 enum pmic_pon_state {
@@ -300,7 +305,7 @@ static int pmic_pon_log_print_reason(char *buf, int buf_size, u8 data,
 #define BUF_SIZE 128
 
 static int pmic_pon_log_parse_entry(const struct pmic_pon_log_entry *entry,
-		void *ipc_log)
+		void *ipc_log, struct pmic_pon_log_dev *pon_dev)
 {
 	char buf[BUF_SIZE];
 	const char *label = NULL;
@@ -488,6 +493,10 @@ static int pmic_pon_log_parse_entry(const struct pmic_pon_log_entry *entry,
 		ipc_log_string(ipc_log, "State=Unknown (0x%02X); %s\n",
 				entry->state, buf);
 
+	if (strstr(buf, "S3_RESET_REASON=FAULT_N") || strstr(buf, "GP_FAULT") || strstr(buf, "PBS_NACK")) {
+		pon_dev->pon_fault_detected = 1;
+	}
+
 	return 0;
 }
 
@@ -547,7 +556,7 @@ static int pmic_pon_log_parse(struct pmic_pon_log_dev *pon_dev)
 			continue;
 		}
 
-		ret = pmic_pon_log_parse_entry(&entry, pon_dev->ipc_log);
+		ret = pmic_pon_log_parse_entry(&entry, pon_dev->ipc_log, pon_dev);
 		if (ret < 0)
 			return ret;
 
@@ -648,6 +657,42 @@ static void pmic_pon_log_fault_panic(struct pmic_pon_log_dev *pon_dev)
 	}
 }
 
+static ssize_t pon_fault_detected_show(struct device *dev,
+                                      struct device_attribute *attr,
+                                      char *buf)
+{
+    struct pmic_pon_log_dev *pon_dev = dev_get_drvdata(dev);
+    if (!pon_dev)
+        return -EINVAL;
+
+    return scnprintf(buf, PAGE_SIZE, "%d\n", pon_dev->pon_fault_detected);
+}
+
+static DEVICE_ATTR_RO(pon_fault_detected);
+
+static ssize_t pon_panic_enable_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t count)
+{
+	int new_value;
+	int ret;
+
+	struct pmic_pon_log_dev *pon_dev = dev_get_drvdata(dev);
+	if (!pon_dev)
+		return -EINVAL;
+
+	ret = kstrtoint(buf, 10, &new_value);
+	if (ret < 0)
+		return ret;
+
+	pon_dev->pon_panic_enable = new_value;
+	if (pon_dev->pon_panic_enable == 1 && pon_dev->pon_fault_detected == 1)
+		panic("pon error, get ram dump\n");
+
+	return count;
+}
+
+static DEVICE_ATTR_WO(pon_panic_enable);
+
 static int pmic_pon_log_probe(struct platform_device *pdev)
 {
 	struct pmic_pon_log_dev *pon_dev;
@@ -723,6 +768,14 @@ static int pmic_pon_log_probe(struct platform_device *pdev)
 	if (of_property_read_bool(pdev->dev.of_node, "qcom,pmic-fault-panic"))
 		pmic_pon_log_fault_panic(pon_dev);
 
+	ret = device_create_file(&pdev->dev, &dev_attr_pon_fault_detected);
+	if (ret)
+		dev_err(&pdev->dev, "Failed to create pon_fault_detected sysfs entry\n");
+
+	ret = device_create_file(&pdev->dev, &dev_attr_pon_panic_enable);
+	if (ret)
+		dev_err(&pdev->dev, "Failed to create pon_panic_enable sysfs entry\n");
+
 	return ret;
 }
 
@@ -731,6 +784,10 @@ static int pmic_pon_log_remove(struct platform_device *pdev)
 	struct pmic_pon_log_dev *pon_dev = platform_get_drvdata(pdev);
 
 	ipc_log_context_destroy(pon_dev->ipc_log);
+
+	device_remove_file(&pdev->dev, &dev_attr_pon_fault_detected);
+
+	device_remove_file(&pdev->dev, &dev_attr_pon_panic_enable);
 
 	return 0;
 }

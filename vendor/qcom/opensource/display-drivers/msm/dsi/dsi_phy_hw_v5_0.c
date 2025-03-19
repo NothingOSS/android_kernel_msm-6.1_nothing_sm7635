@@ -357,7 +357,7 @@ static void dsi_phy_hw_dphy_enable(struct dsi_phy_hw *phy, struct dsi_phy_cfg *c
 	glbl_rescode_top_ctrl = less_than_1500_mhz ? 0x3c : 0x03;
 	glbl_rescode_bot_ctrl = less_than_1500_mhz ? 0x38 : 0x3c;
 	glbl_str_swi_cal_sel_ctrl = 0x00;
-	glbl_hstx_str_ctrl_0 = 0x88;
+	glbl_hstx_str_ctrl_0 = 0x11;
 
 
 	split_link_enabled = cfg->split_link.enabled;

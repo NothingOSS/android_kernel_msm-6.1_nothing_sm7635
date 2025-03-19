@@ -189,7 +189,10 @@
 
 	trusted_apps_mem: trusted_apps_region@e9500000 {
 		no-map;
+		/*
 		reg = <0x0 0xe9500000 0x0 0x1200000>;
+		*/
+		reg = <0x0 0xe9500000 0x0 0x5500000>;
 	};
 
 };

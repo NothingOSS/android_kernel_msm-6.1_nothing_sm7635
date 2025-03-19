@@ -56,7 +56,9 @@
 
 	vddio-supply = <&L9B>;
 	vci-supply = <&L19B>;
+/*
 	vdd-supply = <&L6F>;
+*/
 };
 
 &mdss_mdp {

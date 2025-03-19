@@ -17,10 +17,6 @@ PINEAPPLE_BASE_DTB += pineapple.dtb pineapple-v2.dtb
 PINEAPPLE_APQ_BASE_DTB += pineapplep.dtb pineapplep-v2.dtb pineapplep-sg-v2.dtb
 
 PINEAPPLE_BOARDS += \
-		 pineapple-mtp-overlay.dtbo \
-		 pineapple-mtp-nfc-overlay.dtbo \
-		 pineapple-cdp-overlay.dtbo \
-		 pineapple-cdp-nfc-overlay.dtbo \
 		 pineapple-qrd-overlay.dtbo \
 		 pineapple-qrd-sku2-overlay.dtbo \
 		 pineapple-rcm-overlay.dtbo \
@@ -91,6 +87,7 @@ VOLCANO_BOARDS += \
 		volcano6i-mtp-wcd9395-moselle-overlay.dtbo \
 		volcano6i-mtp-moselle-wingmate-overlay.dtbo \
 		volcano-qrd-overlay.dtbo \
+		volcano-qrd-pro-overlay.dtbo \
 		volcano6i-qrd-moselle-overlay.dtbo
 
 pineapple-dtb-$(CONFIG_ARCH_VOLCANO) += \

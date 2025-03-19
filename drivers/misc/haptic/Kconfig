@@ -1,0 +1,16 @@
+#
+# ICS_HAPTIC_DRV Driver
+#
+
+config ICS_HAPTIC_DRV
+	tristate "ICS_HAPTIC_DRV driver"
+	depends on I2C
+	help
+	  Say Y here if you have AAC/ICS RT6010 haptic controller
+	  chip in your system.
+	  If unsure, say N.
+	  To compile this driver as a module, choose M here: the
+	  module will be called aac_haptic_drv.
+
+
+

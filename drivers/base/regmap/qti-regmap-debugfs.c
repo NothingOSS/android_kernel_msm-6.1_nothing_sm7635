@@ -5,6 +5,7 @@
  */
 
 #include <linux/debugfs.h>
+#include <linux/proc_fs.h>
 #include <linux/device.h>
 #include <linux/err.h>
 #include <linux/kernel.h>
@@ -23,6 +24,7 @@ struct regmap_qti_debugfs {
 	struct device		*dev;
 	unsigned int		dump_address;
 	unsigned int		dump_count;
+	struct proc_dir_entry *proc_entry;
 };
 
 static DEFINE_MUTEX(regmap_qti_debugfs_lock);
@@ -461,6 +463,59 @@ static const struct file_operations regmap_data_fops = {
 	.llseek = default_llseek,
 };
 
+static const struct proc_ops regmap_data_proc_ops = {
+    .proc_open = simple_open,
+    .proc_read = regmap_data_read_file,
+    .proc_write = regmap_data_write_file,
+    .proc_lseek = default_llseek,
+};
+
+static ssize_t regmap_dump_count_read(struct file *file, char __user *user_buf,
+                                      size_t count, loff_t *ppos)
+{
+    struct regmap_qti_debugfs *debug_map = pde_data(file_inode(file));
+    char buf[32];
+    int len;
+
+    if (!debug_map)
+        return -EINVAL;
+
+    len = snprintf(buf, sizeof(buf), "%u\n", debug_map->dump_count);
+
+    return simple_read_from_buffer(user_buf, count, ppos, buf, len);
+}
+
+static ssize_t regmap_dump_count_write(struct file *file, const char __user *user_buf,
+                                       size_t count, loff_t *ppos)
+{
+    struct regmap_qti_debugfs *debug_map = pde_data(file_inode(file));
+    char buf[32];
+    unsigned int value;
+    ssize_t buf_size;
+
+    if (!debug_map)
+        return -EINVAL;
+
+    buf_size = min(count, (sizeof(buf) - 1));
+    if (copy_from_user(buf, user_buf, buf_size))
+        return -EFAULT;
+
+    buf[buf_size] = '\0';
+    if (kstrtouint(buf, 10, &value))
+        return -EINVAL;
+
+    debug_map->dump_count = value;
+
+    return count;
+}
+
+static const struct proc_ops regmap_dump_count_proc_ops = {
+    .proc_open = simple_open,
+    .proc_read = regmap_dump_count_read,
+    .proc_write = regmap_dump_count_write,
+    .proc_lseek = default_llseek,
+};
+
 /**
  * regmap_qti_debugfs_add() - register extra debugfs files for a regmap
  * @dev:		Device pointer of regmap owner
@@ -476,6 +531,7 @@ static struct regmap_qti_debugfs *regmap_qti_debugfs_add(struct device *dev,
 							 struct regmap *regmap)
 {
 	struct regmap_qti_debugfs *debug_map = NULL;
+	char proc_dir_name[128] = {0};
 
 	if (!dev || !regmap) {
 		pr_err("%s: dev or regmap is NULL\n", __func__);
@@ -513,6 +569,12 @@ static struct regmap_qti_debugfs *regmap_qti_debugfs_add(struct device *dev,
 	debugfs_create_file_unsafe("data", QTI_DEBUGFS_FILE_MODE,
 				regmap->debugfs, debug_map, &regmap_data_fops);
 
+	snprintf(proc_dir_name, sizeof(proc_dir_name), "qti-regmap-%s", regmap->debugfs->d_name.name);
+	debug_map->proc_entry = proc_mkdir(proc_dir_name, NULL);
+	if (debug_map->proc_entry) {
+		proc_create_data("data", 0600, debug_map->proc_entry, &regmap_data_proc_ops, debug_map);
+		proc_create_data("count", 0600, debug_map->proc_entry, &regmap_dump_count_proc_ops, debug_map);
+	}
 done:
 	mutex_unlock(&regmap_qti_debugfs_lock);
 

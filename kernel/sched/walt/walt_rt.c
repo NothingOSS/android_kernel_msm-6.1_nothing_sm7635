@@ -92,7 +92,7 @@ int sched_long_running_rt_task_ms_handler(struct ctl_table *table, int write,
 	return ret;
 }
 
-static void walt_rt_energy_aware_wake_cpu(struct task_struct *task, struct cpumask *lowest_mask,
+void walt_rt_energy_aware_wake_cpu(struct task_struct *task, struct cpumask *lowest_mask,
 					  int ret, int *best_cpu)
 {
 	int cpu;

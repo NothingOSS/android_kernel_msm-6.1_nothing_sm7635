@@ -147,6 +147,11 @@ struct wcd9378_priv {
 	u8 tx_swrclk;
 	u8 tx_clkscale;
 	struct blocking_notifier_head notifier;
+#ifdef CONFIG_DEBUG_FS
+	struct dentry *debugfs_wcd9378_dent;
+	struct dentry *debugfs_reg_dump;
+	unsigned int read_data;
+#endif
 };
 
 struct wcd9378_micbias_setting {

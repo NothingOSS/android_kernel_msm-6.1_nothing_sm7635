@@ -1,0 +1,130 @@
+/* Copyright (c) 2021 The Linux Foundation. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ */
+
+&qupv3_se7_i2c {
+	wl28681_j:wl28681@61 {
+		status = "okay";
+		compatible = "willsemi,wl28681";
+		reg =<0x61>;
+		reset-gpios = <&pmr735b_gpios 4 GPIO_ACTIVE_LOW>;
+		irq-gpios = <&tlmm 125 GPIO_ACTIVE_HIGH>;
+		vin12 = <&S2B>;
+		vin34 = <&BOB>;
+		vin5 = <&BOB>;
+		vin6 = <&BOB>;
+		vin7 = <&BOB>;
+
+		regulators {
+			WL_LDO1_j: WL_LDO1_j {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <2048000>;
+				// init-voltage = <1150000>;
+				regulator-name ="WL_LDO1_j";
+			};
+			WL_LDO2_j: WL_LDO2_j {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <2048000>;
+				// init-voltage = <1200000>;
+				regulator-name = "WL_LDO2_j";
+			};
+			WL_LDO3_j: WL_LDO3_j {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <2804000>;
+				// init-voltage = <2804000>;
+				regulator-name = "WL_LDO3_j";
+			};
+			WL_LDO4_j: WL_LDO4_j {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <2804000>;
+				// init-voltage = <2704000>;
+				regulator-name = "WL_LDO4_j";
+			};
+			WL_LDO5_j: WL_LDO5_j {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <2804000>;
+				// init-voltage = <2804000>;
+				regulator-name = "WL_LDO5_j";
+			};
+			WL_LDO6_j:WL_LDO6_j {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <2804000>;
+				// init-voltage = <2804000>;
+				regulator-name ="WL_LDO6_j";
+			};
+			WL_LDO7_j:WL_LDO7_j {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <3100000>;
+				// init-voltage = <3100000>;
+				regulator-name = "WL_LDO7_j";
+			};
+		};
+	};
+
+	wl28681:wl28681@35 {
+		status = "okay";
+		compatible = "willsemi,wl28681";
+		reg =<0x35>;
+		reset-gpios = <&pmr735b_gpios 3 GPIO_ACTIVE_LOW>;
+		irq-gpios = <&tlmm 126 GPIO_ACTIVE_HIGH>;
+		vin12 = <&S2B>;
+		vin34 = <&BOB>;
+		vin5 = <&BOB>;
+		vin6 = <&BOB>;
+		vin7 = <&BOB>;
+
+		regulators {
+			WL_LDO1: WL_LDO1 {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <2048000>;
+				// init-voltage = <1050000>;
+				regulator-name ="WL_LDO1";
+			};
+			WL_LDO2: WL_LDO2 {
+				regulator-min-microvolt = <1000000>;
+				regulator-max-microvolt = <2048000>;
+				// init-voltage = <1100000>;
+				regulator-name = "WL_LDO2";
+			};
+			WL_LDO3: WL_LDO3 {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <2804000>;
+				// init-voltage = <2204000>;
+				regulator-name = "WL_LDO3";
+			};
+			WL_LDO4: WL_LDO4 {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <2804000>;
+				// init-voltage = <1804000>;
+				regulator-name = "WL_LDO4";
+			};
+			WL_LDO5: WL_LDO5 {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <3100000>;
+				// init-voltage = <3100000>;
+				regulator-name = "WL_LDO5";
+			};
+			WL_LDO6:WL_LDO6 {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <3004000>;
+				// init-voltage = <3004000>;
+				regulator-name ="WL_LDO6";
+			};
+			WL_LDO7:WL_LDO7 {
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <2804000>;
+				// init-voltage = <2804000>;
+				regulator-name = "WL_LDO7";
+			};
+		};
+	};
+};

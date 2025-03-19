@@ -16,6 +16,7 @@ enum pause_client {
 	PAUSE_THERMAL	= 0x02,
 	PAUSE_HYP	= 0x04,
 	PAUSE_SBT	= 0x08,
+	PAUSE_CLIENT_MAX,
 };
 
 #define NO_BOOST 0

@@ -258,6 +258,40 @@ enum ufs_qcom_phy_init_type {
  */
 #define UFS_DEVICE_QUIRK_PA_HIBER8TIME          (1 << 15)
 
+/* manual gc */
+struct ufs_manual_gc {
+        int state;
+        bool hagc_support;
+        struct hrtimer hrtimer;
+        unsigned long delay_ms;
+        struct work_struct hibern8_work;
+        struct workqueue_struct *mgc_workq;
+};
+
+#define UFSHCD_MANUAL_GC_HOLD_HIBERN8           10000    /* 10 seconds */
+#define UFSHCD_MANUAL_GC_HOLD_HIBERN8_MAX       10000
+#define UFSHCD_MANUAL_GC_HOLD_HIBERN8_MIN       2000
+
+#define QUERY_ATTR_IDN_MANUAL_GC_CONT           0x12
+#define QUERY_ATTR_IDN_MANUAL_GC_STATUS         0x13
+
+enum {
+        MANUAL_GC_OFF = 0,
+        MANUAL_GC_ON,
+        MANUAL_GC_DISABLE,
+        MANUAL_GC_ENABLE,
+        MANUAL_GC_MAX,
+};
+
+enum {
+        MANUAL_GC_STATUS_CLEAN = 0,
+        MANUAL_GC_STATUS_PAUSE,
+        MANUAL_GC_STATUS_DIRTY,
+        MANUAL_GC_STATUS_MAX,
+};
+
+extern void init_manual_gc(struct ufs_hba *hba);
+
 /*
  * Some ufs device vendors need a different TSync length.
  * Enable this quirk to give an additional TX_HS_SYNC_LENGTH.
@@ -627,6 +661,8 @@ struct ufs_qcom_host {
 	bool disable_wb_support;
 	struct ufs_qcom_ber_hist ber_hist[UFS_QCOM_BER_MODE_MAX];
 	struct list_head regs_list_head;
+	/* manual_gc */
+	struct ufs_manual_gc manual_gc;
 	bool ber_th_exceeded;
 	bool irq_affinity_support;
 	bool esi_enabled;

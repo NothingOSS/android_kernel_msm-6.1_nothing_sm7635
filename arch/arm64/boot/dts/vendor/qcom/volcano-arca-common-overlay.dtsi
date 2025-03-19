@@ -1,0 +1,23 @@
+&soc {
+	bootloader_log {
+		compatible = "nothing,bootloader_log";
+		memory-region = <&uefi_log_mem>;
+	};
+
+	nothing_secure_element {
+		compatible = "nothing,secure_element";
+		// HWIO_OEM_SECURITY_POLICY_LSB_ADDR
+		oem_sec_boot_addr = <0x221C8C70>;
+	};
+};
+
+&ramoops_mem {
+	linux,reserve-contiguous-region;
+	linux,reserve-region;
+	linux,remove-completely;
+	reg = <0x0 0x81f20000 0x0 0x400000>;
+	size = <0x400000>;
+	console-size = <0x200000>;
+	pmsg-size = <0x200000>;
+};
+
