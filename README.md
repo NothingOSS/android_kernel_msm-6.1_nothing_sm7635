@@ -7,6 +7,11 @@
      - vendor/qcom/proprietary/
      - vendor/qcom/opensource/
 
+- NOS 3.1(Asteroids-V3.1-250320-2319)
+  - Improve vibrator driver
+  - Improve display initial code
+  - Add Touch driver log
+
 # How do I submit patches to Android Common Kernels
 
 1. BEST: Make all of your changes to upstream Linux. If appropriate, backport to the stable releases.
