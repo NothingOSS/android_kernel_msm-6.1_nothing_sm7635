@@ -553,7 +553,7 @@ static int fts_pm_suspend(struct device *dev)
 {
     struct fts_ts_data *ts_data = dev_get_drvdata(dev);
 
-    FTS_INFO("system enters into pm_suspend");
+    FTS_ERROR("system enters into pm_suspend");
     ts_data->pm_suspend = true;
     reinit_completion(&ts_data->pm_completion);
     return 0;
@@ -563,7 +563,7 @@ static int fts_pm_resume(struct device *dev)
 {
     struct fts_ts_data *ts_data = dev_get_drvdata(dev);
 
-    FTS_INFO("system resumes from pm_suspend");
+    FTS_ERROR("system resumes from pm_suspend");
     ts_data->pm_suspend = false;
     complete(&ts_data->pm_completion);
     return 0;

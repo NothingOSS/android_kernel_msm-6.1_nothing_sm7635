@@ -509,6 +509,7 @@ static ssize_t fts_pocket_mode_store(
     }
     mutex_lock(&ts_data->input_dev->mutex);
 
+    FTS_ERROR("pocket mode info:pm_suspend = %d\n", ts_data->pm_suspend);
     if (ts_data->pm_suspend)
         __pm_stay_awake(ts_data->p_ws);
 
