@@ -864,6 +864,18 @@ static ssize_t daq_duration_store(struct device *dev,
 
 	return count;
 }
+
+static ssize_t lk_f0_show(struct device *dev,
+        struct device_attribute *attr, char *buf)
+{
+        vib_dev_t *vdev = dev_get_drvdata(dev);
+        struct ics_haptic_data *haptic_data = container_of(vdev, struct ics_haptic_data, vib_dev);
+        ssize_t len = 0;
+
+	len = snprintf(buf + len, PAGE_SIZE - len, "%u\n", haptic_data->nt_cmdline_f0);
+	return len;
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 // haptic sys attribute nodes
 ///////////////////////////////////////////////////////////////////////////////
@@ -893,6 +905,7 @@ static DEVICE_ATTR(reset, S_IWUSR | S_IRUGO, NULL, reset_store);
 static DEVICE_ATTR(adc_offset, S_IWUSR | S_IRUGO, adc_offset_show, NULL);
 static DEVICE_ATTR(cali, S_IWUSR | S_IRUGO, NULL, cali_store);
 static DEVICE_ATTR(gpp, S_IWUSR | S_IRUGO, gpp_show, NULL);
+static DEVICE_ATTR(lk_f0, S_IWUSR | S_IRUGO, lk_f0_show, NULL);
 
 static struct attribute *ics_haptic_attributes[] = {
 	&dev_attr_chip_id.attr,
@@ -921,6 +934,7 @@ static struct attribute *ics_haptic_attributes[] = {
 	&dev_attr_adc_offset.attr,
 	&dev_attr_cali.attr,
 	&dev_attr_gpp.attr,
+	&dev_attr_lk_f0.attr,
 	NULL
 };
 
@@ -1276,9 +1290,14 @@ static ssize_t haptic_f0_store(
 	ics_info("nt_backup_f0 = %d\n", haptic_data->nt_backup_f0);
 	mutex_unlock(&haptic_data->lock);
 	pr_info("%s() haptic_data->nt_backup_f0 = %u", __func__, haptic_data->nt_backup_f0);
-	if (abs((int32_t)haptic_data->nt_cmdline_f0 - DEFAULT_F0) > 150){
-		haptic_data->chip_config.f0 = haptic_data->nt_backup_f0;
-		pr_info("%s() haptic_data->nt_cmdline_f0 = %u, haptic_data->chip_config.f0 = nt_backup_f0 = %u", __func__, haptic_data->nt_cmdline_f0, haptic_data->chip_config.f0);
+	if (abs((int32_t)haptic_data->nt_cmdline_f0 - DEFAULT_F0) > F0_THRESHOLD){
+		if (abs((int32_t)haptic_data->nt_backup_f0 - DEFAULT_F0) > F0_THRESHOLD){
+			haptic_data->chip_config.f0 = DEFAULT_F0;
+			ics_err("%s() lk_f0 %d and cali_f0 %d all error",__func__, haptic_data->nt_cmdline_f0, haptic_data->nt_backup_f0);
+		} else {
+			haptic_data->chip_config.f0 = haptic_data->nt_backup_f0;
+			pr_info("%s() haptic_data->nt_cmdline_f0 = %u, haptic_data->chip_config.f0 = nt_backup_f0 = %u", __func__, haptic_data->nt_cmdline_f0, haptic_data->chip_config.f0);
+		}
 	}
 
 	return count;

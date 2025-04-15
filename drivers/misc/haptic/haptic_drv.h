@@ -52,6 +52,7 @@ typedef struct led_classdev vib_dev_t;
 #define MAX_BEMF_DAQ_UNIT       6
 #define MAX_BEMF_BUF_SIZE       (MAX_BEMF_DAQ_COUNT * MAX_BEMF_DAQ_UNIT + 4)
 #define RESAMPLE_THRESHOLD      20
+#define F0_THRESHOLD          150
 
 enum ics_haptic_play_mode
 {
