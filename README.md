@@ -15,6 +15,10 @@
 - NOS 3.1(Asteroids-V3.1-250401-1916)
   - No update
 
+- NOS 3.1(Asteroids-V3.1-250417-1222)
+  - add key input log
+  - update battery and display driver
+
 
 # How do I submit patches to Android Common Kernels
 
