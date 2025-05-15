@@ -192,6 +192,7 @@ enum battery_property_id {
 	BATT_FAKE_TUSB,
 	BATT_FAKE_SOC,
 	BATT_SHUT_DOWN,
+	BATT_ID,
 #endif
 	BATT_PROP_MAX,
 };
@@ -2400,6 +2401,27 @@ static int nt_real_soc_open(struct inode *inode, struct file *file)
 	return single_open(file, nt_real_soc_show, pde_data(inode));
 }
 
+static int nt_battid_show(struct seq_file *m, void *v)
+{
+	struct battery_chg_dev *bcdev = m->private;
+	struct psy_state *pst = &bcdev->psy_list[PSY_TYPE_BATTERY];
+	int rc;
+	if((pst == NULL) || (bcdev == NULL))
+	{
+        return -EINVAL;
+	}
+	rc = read_property_id(bcdev, pst, BATT_ID);
+	if (rc < 0)
+		return rc;
+	seq_printf(m, "%d\n", pst->prop[BATT_ID]);
+	return 0;
+}
+
+static int nt_battid_open(struct inode *inode, struct file *file)
+{
+	return single_open(file, nt_battid_show, pde_data(inode));
+}
+
 const struct nt_proc entries[] = {
 	{"battery_health",{.proc_open = battery_health_open,
                       .proc_read = seq_read,
@@ -2565,6 +2587,11 @@ const struct nt_proc entries[] = {
 	                  .proc_release = single_release,}
 	},
 	{"real_soc",{.proc_open = nt_real_soc_open,
+	                  .proc_read = seq_read,
+	                  .proc_lseek = seq_lseek,
+	                  .proc_release = single_release,}
+	},
+	{"battid",{.proc_open = nt_battid_open,
 	                  .proc_read = seq_read,
 	                  .proc_lseek = seq_lseek,
 	                  .proc_release = single_release,}
