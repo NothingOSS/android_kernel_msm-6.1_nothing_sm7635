@@ -1037,6 +1037,20 @@ static int _sde_connector_update_dirty_properties(
 	return 0;
 }
 
+static void _sde_connector_update_fps_gamma(struct dsi_display *display)
+{
+	if (!display || !display->panel) {
+		SDE_ERROR("Invalid params(s) dsi_display %pK, panel %pK\n",
+					display, ((display) ? display->panel : NULL));
+		return;
+	}
+
+	if (display->config.panel_mode == DSI_OP_VIDEO_MODE) {
+		send_refreshrate_cmd(display->panel, display->panel->cur_mode->timing.refresh_rate);
+		DSI_INFO("set refreshrate refresh_rate=%d\n", display->panel->cur_mode->timing.refresh_rate);
+	}
+	return;
+}
 static int _sde_connector_update_finger_hbm_status(
 				struct sde_connector *c_conn)
 {
@@ -1222,6 +1236,7 @@ int sde_connector_prepare_commit(struct drm_connector *connector)
 	struct sde_connector_state *c_state;
 	struct msm_display_conn_params params;
 	int rc;
+	struct dsi_display * display;
 
 	if (!connector) {
 		SDE_ERROR("invalid argument\n");
@@ -1241,6 +1256,9 @@ int sde_connector_prepare_commit(struct drm_connector *connector)
 		if (rc) {
 			SDE_ERROR("update hbm status failed\n");
 		}
+		display = (struct dsi_display *) c_conn->display;
+		if (display && display->panel && !display->panel->update_init_gamma)
+			_sde_connector_update_fps_gamma(display);
 	}
 
 	if (!c_conn->ops.prepare_commit)

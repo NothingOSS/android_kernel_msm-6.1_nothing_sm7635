@@ -4975,6 +4975,7 @@ int send_refreshrate_cmd(struct dsi_panel *panel, int refreshrate)
 	DSI_INFO("send fps cmd, fps = %d, last_fps = %d\n", refreshrate, panel->last_refresh_rate);
 	mutex_lock(&panel->panel_lock);
 
+	panel->update_init_gamma = true;
 	if (panel->last_refresh_rate == 30 && refreshrate != 30) {
 		rc = dsi_panel_tx_cmd_set(panel, DSI_CMD_EXIT_30HZ);
 		if (rc) {
@@ -5061,6 +5062,7 @@ int dsi_panel_enable(struct dsi_panel *panel)
 		}
 	}
 	panel->panel_initialized = true;
+	panel->update_init_gamma = false;
 error:
 	mutex_unlock(&panel->panel_lock);
 	return rc;
@@ -5152,6 +5154,7 @@ int dsi_panel_disable(struct dsi_panel *panel)
 	panel->panel_initialized = false;
 	panel->power_mode = SDE_MODE_DPMS_OFF;
 	panel->lhbm_state = false;
+	panel->update_init_gamma = false;
 
 	mutex_unlock(&panel->panel_lock);
 	return rc;

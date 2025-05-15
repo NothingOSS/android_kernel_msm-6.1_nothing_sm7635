@@ -286,6 +286,7 @@ struct dsi_panel {
 	bool doze_recoverying;
 	int last_refresh_rate;
 	bool lhbm_state;
+	bool update_init_gamma;
 };
 
 static inline bool dsi_panel_ulps_feature_enabled(struct dsi_panel *panel)
