@@ -20,6 +20,9 @@
  - NOS 4.1(Frogger-B4.1-260630-1839)
    - Fix TP issue
 
+ - NOS 4.1(Frogger-B4.1-260808-1352)
+   - No update
+
 
 # How do I submit patches to Android Common Kernels
 
