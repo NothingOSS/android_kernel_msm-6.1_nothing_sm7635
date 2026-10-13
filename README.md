@@ -23,6 +23,9 @@
  - NOS 4.1(Frogger-B4.1-260808-1352)
    - No update
 
+ - NOS 4.1(Frogger-B4.1-260911-0959)
+   - No update
+
 
 # How do I submit patches to Android Common Kernels
 
